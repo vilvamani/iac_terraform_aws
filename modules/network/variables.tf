@@ -14,5 +14,4 @@ variable "vpc_cidr_range" {
 }
 
 variable "tags" {
-    CreatedBy  = "vilvamani.arumugam"
 }
