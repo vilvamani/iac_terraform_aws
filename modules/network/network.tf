@@ -41,6 +41,17 @@ resource "aws_subnet" "private_subnet_two" {
   tags       = "${merge(var.tags, map("Name", "public-${var.subnet_az[1]}", "Environment", "${var.environment}"))}"
 }
 
+resource "aws_route_table" "r" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags       = "${merge(var.tags, map("Name", "public-rt", "Environment", "${var.environment}"))}"
+}
+
 output "vpc_id" {
   value = aws_vpc.vpc.id
 }
