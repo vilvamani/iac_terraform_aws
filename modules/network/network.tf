@@ -6,6 +6,11 @@ resource "aws_vpc" "vpc" {
   tags       = "${merge(var.tags, map("Name", "kubernetes-vpc", "Environment", "${var.environment}"))}"
 }
 
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.vpc.id
+  tags       = "${merge(var.tags, map("Name", "kubernetes-vpc-igw", "Environment", "${var.environment}"))}"
+}
+
 resource "aws_subnet" "public_subnet_one" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.subnet_cidr[0]
