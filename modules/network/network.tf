@@ -41,7 +41,7 @@ resource "aws_subnet" "private_subnet_two" {
   tags       = "${merge(var.tags, map("Name", "public-${var.subnet_az[1]}", "Environment", "${var.environment}"))}"
 }
 
-resource "aws_route_table" "r" {
+resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.vpc.id
 
   route {
@@ -50,6 +50,11 @@ resource "aws_route_table" "r" {
   }
 
   tags       = "${merge(var.tags, map("Name", "public-rt", "Environment", "${var.environment}"))}"
+}
+
+resource "aws_route_table_association" "public_rt_ass" {
+  subnet_id      = [aws_subnet.public_subnet_one.id]
+  route_table_id = aws_route_table.public_rt.id
 }
 
 output "vpc_id" {
