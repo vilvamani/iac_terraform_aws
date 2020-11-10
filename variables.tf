@@ -14,3 +14,11 @@ variable "private_subnets" {
 variable "public_subnets" {
   type        = list
 }
+
+varaibel "ssh_traffic_cidr" {
+  type        = list  
+}
+
+varaibel "k8s_traffic_cidr" {
+  type        = list  
+}
