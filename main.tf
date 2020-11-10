@@ -51,11 +51,21 @@ module "aws_network" {
 }
 
 module "ssh_sg" {
-  source = "terraform-aws-modules/security-group/aws//modules/ssh"
+  source = "terraform-aws-modules/security-group/aws"
 
-  name        = "ssh-sg"
-  description = "ssh-sg"
+  name        = "bastion-sg"
+  description = "bastion-sg"
   vpc_id      = module.aws_network.vpc_id
 
-  ingress_cidr_blocks      = var.ssh_traffic_cidr
+  ingress_cidr_blocks      = var.bastion_traffic_cidr
+  ingress_rules            = ["ssh-22-tcp", "rdp-3389-tcp"]
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 30000
+      to_port     = 30000
+      protocol    = "tcp"
+      description = "K8s-service ports"
+      cidr_blocks = var.k8s_traffic_cidr
+    }
+  ]
 }

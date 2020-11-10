@@ -18,7 +18,7 @@ variable "database_subnets" {
   type        = list
 }
 
-variable "ssh_traffic_cidr" {
+variable "bastion_traffic_cidr" {
   type        = list  
 }
 
