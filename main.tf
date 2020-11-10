@@ -9,6 +9,11 @@ locals {
   cluster_name = "training-k8s-${random_string.suffix.result}"
 }
 
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
+
 module "aws_network" {
   source          = "terraform-aws-modules/vpc/aws"
 
