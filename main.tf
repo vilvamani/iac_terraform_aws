@@ -66,6 +66,10 @@ module "ssh_sg" {
       protocol    = "tcp"
       description = "K8s-service ports"
       cidr_blocks = var.k8s_traffic_cidr
-    }
+    },
+    {
+      rule        = "postgresql-tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
   ]
 }
