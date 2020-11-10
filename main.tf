@@ -49,3 +49,13 @@ module "aws_network" {
     "Environment"                                 = "development"
   }
 }
+
+module "ssh_sg" {
+  source = "terraform-aws-modules/security-group/aws/modules/ssh"
+
+  name        = "ssh-sg"
+  description = "ssh-sg"
+  vpc_id      = module.aws_network.vpc_id
+
+  ingress_cidr_blocks      = var.ssh_traffic_cidr
+}
