@@ -14,6 +14,10 @@ variable "public_subnets" {
   type        = list
 }
 
+variable "database_subnets" {
+  type        = list
+}
+
 variable "ssh_traffic_cidr" {
   type        = list  
 }
