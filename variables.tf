@@ -1,21 +1,15 @@
 variable "region" {
-    type        = "string"
-    default = "us-east-1"
-}
-
-variable "environment" {
   type        = "string"
-  default     = "development"
+  default = "us-east-1"
 }
 
 variable "vpc_cidr_range" {
-    type        = "string"
-    default = "10.0.0.0/16"
+  type        = "string"
+  default = "10.0.0.0/16"
 }
 
-variable "subnet_az" {
+variable "private_subnets" {
 }
 
-variable "tags" {
-    
+variable "public_subnets" {
 }
