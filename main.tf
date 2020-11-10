@@ -51,7 +51,7 @@ module "aws_network" {
 }
 
 module "ssh_sg" {
-  source = "terraform-aws-modules/security-group/aws/modules/ssh"
+  source = "terraform-aws-modules/security-group/aws//modules/ssh"
 
   name        = "ssh-sg"
   description = "ssh-sg"
