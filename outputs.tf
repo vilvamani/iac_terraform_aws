@@ -21,3 +21,8 @@ output "public_route_table_ids" {
 output "private_route_table_ids" {
   value = module.aws_network.private_route_table_ids
 }
+
+output "kubeadm_token" {
+  description = "Kubeadm token"
+  value       = data.template_file.kubeadm_token.rendered
+}
