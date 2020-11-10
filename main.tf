@@ -62,7 +62,7 @@ module "ssh_sg" {
   ingress_with_cidr_blocks = [
     {
       from_port   = 30000
-      to_port     = 30000
+      to_port     = 32000
       protocol    = "tcp"
       description = "K8s-service ports"
       cidr_blocks = var.k8s_traffic_cidr
