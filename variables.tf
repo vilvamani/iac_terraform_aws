@@ -15,10 +15,10 @@ variable "public_subnets" {
   type        = list
 }
 
-varaibel "ssh_traffic_cidr" {
+variable "ssh_traffic_cidr" {
   type        = list  
 }
 
-varaibel "k8s_traffic_cidr" {
+variable "k8s_traffic_cidr" {
   type        = list  
 }
