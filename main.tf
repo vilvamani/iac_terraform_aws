@@ -3,11 +3,6 @@ provider "aws" {
   version     = "~> 3.0"
 }
 
-variable "region" {
-  default     = var.region
-  description = "AWS region"
-}
-
 data "aws_availability_zones" "zones" {}
 
 locals {
