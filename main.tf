@@ -50,22 +50,22 @@ module "aws_network" {
   }
 }
 
-module "ssh_sg" {
+module "vote_service_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "bastion-sg"
-  description = "bastion-sg"
-  vpc_id      = module.aws_network.vpc_id
+  name        = "user-service"
+  description = "Security group for user-service with custom ports open within VPC, and PostgreSQL publicly open"
+  vpc_id      = "vpc-12345678"
 
-  ingress_cidr_blocks      = var.bastion_traffic_cidr
-  ingress_rules            = ["ssh-22-tcp", "rdp-3389-tcp"]
+  ingress_cidr_blocks      = ["10.10.0.0/16"]
+  ingress_rules            = ["https-443-tcp"]
   ingress_with_cidr_blocks = [
     {
-      from_port   = 30000
-      to_port     = 32000
+      from_port   = 8080
+      to_port     = 8090
       protocol    = "tcp"
-      description = "K8s-service ports"
-      cidr_blocks = var.k8s_traffic_cidr
+      description = "User-service ports"
+      cidr_blocks = "10.10.0.0/16"
     },
     {
       rule        = "postgresql-tcp"
