@@ -58,7 +58,7 @@ module "aws_bastion_sg" {
   vpc_id      = module.aws_network.vpc_id
 
   ingress_cidr_blocks      = var.bastion_traffic_cidr
-  ingress_rules            = ["https-443-tcp"]
+  ingress_rules            = ["ssh-tcp"]
 }
 
 module "aws_security_group" {
