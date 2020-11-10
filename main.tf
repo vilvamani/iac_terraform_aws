@@ -26,6 +26,7 @@ module "aws_network" {
   azs             = data.aws_availability_zones.zones.names
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
+  database_subnets = var.database_subnets
 
   enable_nat_gateway = false
   single_nat_gateway = false
