@@ -53,11 +53,11 @@ module "aws_network" {
 module "aws_security_group" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "bastion-sg"
-  description = "bastion-sg"
+  name        = "k8s-sg"
+  description = "k8s-sg"
   vpc_id      = module.aws_network.vpc_id
 
-  ingress_cidr_blocks      = var.bastion_traffic_cidr
+  ingress_cidr_blocks      = var.k8s_traffic_cidr
   ingress_rules            = ["https-443-tcp"]
   ingress_with_cidr_blocks = [
     {
