@@ -1,3 +1,23 @@
 output "vpc_id" {
   value = module.aws_network.vpc_id
 }
+
+output "public_subnets" {
+  value = module.aws_network.public_subnets
+}
+
+output "private_subnets" {
+  value = module.aws_network.private_subnets
+}
+
+output "igw_id" {
+  value = module.aws_network.igw_id
+}
+
+output "public_route_table_ids" {
+  value = module.aws_network.public_route_table_ids
+}
+
+output "private_route_table_ids" {
+  value = module.aws_network.private_route_table_ids
+}
