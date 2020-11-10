@@ -65,7 +65,7 @@ module "aws_security_group" {
       to_port     = 32000
       protocol    = "tcp"
       description = "K8s-service ports"
-      cidr_blocks = "10.10.0.0/16"
+      cidr_blocks = var.k8s_traffic_cidr
     },
     {
       rule        = "postgresql-tcp"
