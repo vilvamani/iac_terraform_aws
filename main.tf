@@ -5,6 +5,10 @@ provider "aws" {
 
 data "aws_availability_zones" "zones" {}
 
+locals {
+  cluster_name = "training-k8s-${random_string.suffix.result}"
+}
+
 module "aws_network" {
   source          = "terraform-aws-modules/vpc/aws"
 
