@@ -61,7 +61,7 @@ module "aws_bastion_sg" {
   ingress_rules            = ["ssh-tcp"]
 }
 
-module "aws_security_group" {
+module "aws_k8s_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "k8s-sg"
