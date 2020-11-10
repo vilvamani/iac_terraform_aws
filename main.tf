@@ -50,15 +50,15 @@ module "aws_network" {
   }
 }
 
-module "ssh_sg" {
+module "aws_security_group" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "bastion-sg"
   description = "bastion-sg"
   vpc_id      = module.aws_network.vpc_id
 
-  ingress_cidr_blocks      = var.bastion_traffic_cidr
-  ingress_rules            = ["ssh-22-tcp"]
+  ingress_cidr_blocks      = ["10.10.0.0/16"]
+  ingress_rules            = ["https-443-tcp"]
   ingress_with_cidr_blocks = [
     {
       from_port   = 30000
