@@ -120,7 +120,7 @@ data "template_file" "kubeadm_token" {
 ##### K8S Master IAM roles #####
 
 data "template_file" "master_policy_json" {
-  template = file("${path.module}/template/master-policy.json.tpl")
+  template = file("${path.module}/templates/master-policy.json.tpl")
 
   vars = {}
 }
@@ -167,7 +167,7 @@ resource "aws_iam_instance_profile" "master_profile" {
 ##### K8S Node IAM roles #####
 
 data "template_file" "node_policy_json" {
-  template = file("${path.module}/template/node-policy.json.tpl")
+  template = file("${path.module}/templates/node-policy.json.tpl")
 
   vars = {}
 }
