@@ -26,6 +26,10 @@ variable "k8s_traffic_cidr" {
   type        = list  
 }
 
+variable "key_name" {
+  type        = string
+}
+
 variable "min_worker_count" {
   type        = string
 }
@@ -52,4 +56,8 @@ variable "hosted_zone_private" {
 
 variable "addons" {
   type        = list  
+}
+
+variable "tags" {
+  type        = map(string)
 }
