@@ -30,6 +30,10 @@ variable "key_name" {
   type        = string
 }
 
+variable "k8s_ami_id" {
+  type        = string
+}
+
 variable "min_worker_count" {
   type        = string
 }

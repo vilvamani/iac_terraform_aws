@@ -6,6 +6,7 @@ database_subnets = ["10.0.201.0/24", "10.0.202.0/24", "10.0.203.0/24"]
 bastion_traffic_cidr = ["0.0.0.0/0"]
 k8s_traffic_cidr = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
 key_name = "doit"
+k8s_ami_id = "ami-0947d2ba12ee1ff75"
 min_worker_count = 1
 max_worker_count = 1
 master_instance_type = "t2.micro"
