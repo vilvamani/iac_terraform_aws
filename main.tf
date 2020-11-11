@@ -210,3 +210,113 @@ resource "aws_iam_instance_profile" "node_profile" {
   name = "${local.cluster_name}-node"
   role = aws_iam_role.node_role.name
 }
+
+####################################
+##### EC2 Bootstraping scripts #####
+####################################
+
+data "template_file" "init_master" {
+  template = file("${path.module}/scripts/init-aws-kubernetes-master.sh")
+
+  vars = {
+    kubeadm_token = module.kubeadm-token.token
+    dns_name      = "${local.cluster_name}.${var.hosted_zone}"
+    ip_address    = aws_eip.master.public_ip
+    cluster_name  = local.cluster_name
+    addons        = join(" ", var.addons)
+    aws_region    = var.region
+    asg_name      = "${local.cluster_name}-nodes"
+    asg_min_nodes = var.min_worker_count
+    asg_max_nodes = var.max_worker_count
+    aws_subnets   = join(" ", concat(module.aws_network.private_subnets, [module.aws_network.private_subnets[0]]))
+  }
+}
+
+data "template_file" "init_node" {
+  template = file("${path.module}/scripts/init-aws-kubernetes-node.sh")
+
+  vars = {
+    kubeadm_token     = module.kubeadm-token.token
+    master_ip         = aws_eip.master.public_ip
+    master_private_ip = aws_instance.master.private_ip
+    dns_name          = "${vlocal.cluster_name}.${var.hosted_zone}"
+  }
+}
+
+data "template_cloudinit_config" "master_cloud_init" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "cloud-init-config.yaml"
+    content_type = "text/cloud-config"
+    content      = data.template_file.cloud_init_config.rendered
+  }
+
+  part {
+    filename     = "init-aws-kubernete-master.sh"
+    content_type = "text/x-shellscript"
+    content      = data.template_file.init_master.rendered
+  }
+}
+
+data "template_cloudinit_config" "node_cloud_init" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "init-aws-kubernetes-node.sh"
+    content_type = "text/x-shellscript"
+    content      = data.template_file.init_node.rendered
+  }
+}
+
+#########################################
+##### K8s Master - AWS EC2 instance #####
+#########################################
+
+resource "aws_eip" "master" {
+  vpc = true
+}
+
+resource "aws_instance" "master" {
+  instance_type = var.master_instance_type
+
+  ami =  var.k8s_ami_id
+
+  key_name = var.key_name
+
+  subnet_id = module.aws_network.private_subnets[0]
+
+  associate_public_ip_address = false
+
+  vpc_security_group_ids = [
+    module.aws_k8s_sg.id,
+  ]
+
+  iam_instance_profile = aws_iam_instance_profile.master_profile.name
+
+  user_data = data.template_cloudinit_config.master_cloud_init.rendered
+
+  tags = merge(
+    {
+      "Name"                                                 = join("-", [local.cluster_name, "master"])
+      format("kubernetes.io/cluster/%v", local.cluster_name) = "owned"
+    },
+    var.tags,
+  )
+
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = "50"
+    delete_on_termination = true
+  }
+
+  lifecycle {
+    ignore_changes = [
+      ami,
+      user_data,
+      associate_public_ip_address,
+    ]
+  }
+}
