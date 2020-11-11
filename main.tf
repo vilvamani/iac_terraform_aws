@@ -26,7 +26,6 @@ module "aws_network" {
   azs             = data.aws_availability_zones.zones.names
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
-  database_subnets = var.database_subnets
 
   enable_nat_gateway = false
   single_nat_gateway = false
@@ -368,20 +367,6 @@ resource "aws_autoscaling_group" "nodes" {
   min_size             = var.min_worker_count
   desired_capacity     = var.min_worker_count
   launch_configuration = aws_launch_configuration.nodes.name
-
-  tags = concat(
-    [{
-      key                 = "kubernetes.io/cluster/${local.cluster_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "Name"
-      value               = "${local.cluster_name}-node"
-      propagate_at_launch = true
-    }],
-    var.tags2,
-  )
 
   lifecycle {
     ignore_changes = [desired_capacity]
