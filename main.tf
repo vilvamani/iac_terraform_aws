@@ -328,3 +328,62 @@ resource "aws_instance" "master" {
     ]
   }
 }
+
+#########################################
+##### K8s Nodes - AWS EC2 instance ######
+#########################################
+
+resource "aws_launch_configuration" "nodes" {
+  name_prefix          = "${local.cluster_name}-nodes-"
+  image_id             = var.k8s_ami_id
+  instance_type        = var.worker_instance_type
+  key_name             = var.key_name
+  iam_instance_profile = aws_iam_instance_profile.node_profile.name
+
+  security_groups = [
+    module.aws_k8s_sg.this_security_group_id,
+  ]
+
+  associate_public_ip_address = false
+
+  user_data = data.template_cloudinit_config.node_cloud_init.rendered
+
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = "8"
+    delete_on_termination = true
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [user_data]
+  }
+}
+
+resource "aws_autoscaling_group" "nodes" {
+  vpc_zone_identifier = module.aws_network.private_subnets
+
+  name                 = "${local.cluster_name}-nodes"
+  max_size             = var.max_worker_count
+  min_size             = var.min_worker_count
+  desired_capacity     = var.min_worker_count
+  launch_configuration = aws_launch_configuration.nodes.name
+
+  tags = concat(
+    [{
+      key                 = "kubernetes.io/cluster/${local.cluster_name}"
+      value               = "owned"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Name"
+      value               = "${local.cluster_name}-node"
+      propagate_at_launch = true
+    }],
+    var.tags2,
+  )
+
+  lifecycle {
+    ignore_changes = [desired_capacity]
+  }
+}

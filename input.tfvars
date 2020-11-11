@@ -25,3 +25,11 @@ addons = [
 tags = {
     Application = "AWS-Kubernetes"
 }
+
+tags2 = [
+    {
+      key                 = "Application"
+      value               = "AWS-Kubernetes"
+      propagate_at_launch = true
+    }
+]

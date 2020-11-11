@@ -65,3 +65,7 @@ variable "addons" {
 variable "tags" {
   type        = map(string)
 }
+
+variable "tags2" {
+  type        = list(object({key = string, value = string, propagate_at_launch = bool}))
+}
