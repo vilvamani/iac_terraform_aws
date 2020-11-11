@@ -219,7 +219,7 @@ data "template_file" "init_master" {
   template = file("${path.module}/scripts/init-aws-kubernetes-master.sh")
 
   vars = {
-    kubeadm_token = module.kubeadm-token.token
+    kubeadm_token = data.template_file.kubeadm_token.rendered
     dns_name      = "${local.cluster_name}.${var.hosted_zone}"
     ip_address    = aws_eip.master.public_ip
     cluster_name  = local.cluster_name
@@ -236,7 +236,7 @@ data "template_file" "init_node" {
   template = file("${path.module}/scripts/init-aws-kubernetes-node.sh")
 
   vars = {
-    kubeadm_token     = module.kubeadm-token.token
+    kubeadm_token     = data.template_file.kubeadm_token.rendered
     master_ip         = aws_eip.master.public_ip
     master_private_ip = aws_instance.master.private_ip
     dns_name          = "${vlocal.cluster_name}.${var.hosted_zone}"
