@@ -7,10 +7,10 @@ bastion_traffic_cidr = ["101.0.0.0/16"]
 k8s_traffic_cidr = ["101.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
 key_name = "doit"
 k8s_ami_id = "ami-0947d2ba12ee1ff75"
-min_worker_count = 1
-max_worker_count = 1
-master_instance_type = "t2.micro"
-worker_instance_type = "t2.micro"
+min_worker_count = 2
+max_worker_count = 3
+master_instance_type = "t2.medium"
+worker_instance_type = "t2.medium"
 hosted_zone = "vilvamani.xyz"
 hosted_zone_private = false
 
