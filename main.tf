@@ -299,7 +299,7 @@ resource "aws_instance" "master" {
   associate_public_ip_address = false
 
   vpc_security_group_ids = [
-    module.aws_k8s_sg.id,
+    module.aws_k8s_sg.security_group_id,
   ]
 
   iam_instance_profile = aws_iam_instance_profile.master_profile.name
