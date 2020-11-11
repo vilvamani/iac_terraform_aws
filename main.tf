@@ -239,7 +239,7 @@ data "template_file" "init_node" {
     kubeadm_token     = data.template_file.kubeadm_token.rendered
     master_ip         = aws_eip.master.public_ip
     master_private_ip = aws_instance.master.private_ip
-    dns_name          = "${vlocal.cluster_name}.${var.hosted_zone}"
+    dns_name          = "${local.cluster_name}.${var.hosted_zone}"
   }
 }
 
