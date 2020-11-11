@@ -243,6 +243,14 @@ data "template_file" "init_node" {
   }
 }
 
+data "template_file" "cloud_init_config" {
+  template = file("${path.module}/scripts/cloud-init-config.yaml")
+
+  vars = {
+    calico_yaml = base64gzip(file("${path.module}/scripts/calico.yaml"))
+  }
+}
+
 data "template_cloudinit_config" "master_cloud_init" {
   gzip          = true
   base64_encode = true
