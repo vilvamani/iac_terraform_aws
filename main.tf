@@ -231,17 +231,6 @@ data "template_file" "init_master" {
   }
 }
 
-data "template_file" "init_node" {
-  template = file("${path.module}/scripts/init-aws-kubernetes-node.sh")
-
-  vars = {
-    kubeadm_token     = data.template_file.kubeadm_token.rendered
-    master_ip         = aws_eip.master.public_ip
-    master_private_ip = aws_instance.master.private_ip
-    dns_name          = "${local.cluster_name}.${var.hosted_zone}"
-  }
-}
-
 data "template_file" "cloud_init_config" {
   template = file("${path.module}/scripts/cloud-init-config.yaml")
 
@@ -264,6 +253,17 @@ data "template_cloudinit_config" "master_cloud_init" {
     filename     = "init-aws-kubernete-master.sh"
     content_type = "text/x-shellscript"
     content      = data.template_file.init_master.rendered
+  }
+}
+
+data "template_file" "init_node" {
+  template = file("${path.module}/scripts/init-aws-kubernetes-node.sh")
+
+  vars = {
+    kubeadm_token     = data.template_file.kubeadm_token.rendered
+    master_ip         = aws_eip.master.public_ip
+    master_private_ip = aws_instance.master.private_ip
+    dns_name          = "${local.cluster_name}.${var.hosted_zone}"
   }
 }
 
@@ -326,6 +326,11 @@ resource "aws_instance" "master" {
       associate_public_ip_address,
     ]
   }
+}
+
+resource "aws_eip_association" "master_assoc" {
+  instance_id   = aws_instance.master.id
+  allocation_id = aws_eip.master.id
 }
 
 #########################################

@@ -38,6 +38,7 @@ do
   aws ec2 create-tags --resources $SUBNET --tags Key=kubernetes.io/cluster/$CLUSTER_NAME,Value=shared --region $AWS_REGION
 done
 
+yum install -y git
 # Install docker
 yum install -y yum-utils device-mapper-persistent-data lvm2 docker
 
