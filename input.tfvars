@@ -1,4 +1,6 @@
 region = "us-east-1"
+cluster_name  = "aws-kubernetes"
+
 vpc_cidr_range = "10.100.0.0/16"
 
 worker_subnet_ids = ["subnet-63c52e07", "subnet-037b1b2f", "subnet-7d411b35"]

@@ -65,3 +65,7 @@ variable "tags" {
 variable "tags2" {
   type        = list(object({key = string, value = string, propagate_at_launch = bool}))
 }
+
+variable "cluster_name" {
+  description = "Name of the AWS Kubernetes cluster - will be used to name all created resources"
+}

@@ -24,12 +24,12 @@ data "aws_subnet" "cluster_subnet" {
 
 resource "aws_security_group" "kubernetes" {
   vpc_id = data.aws_subnet.cluster_subnet.vpc_id
-  name   = "${local.cluster_name}"
+  name   = "${var.cluster_name}"
 
   tags = merge(
     {
-      "Name"                                               = "${local.cluster_name}"
-      format("kubernetes.io/cluster/%v", "${local.cluster_name}") = "owned"
+      "Name"                                               = "${var.cluster_name}"
+      format("kubernetes.io/cluster/%v", "${var.cluster_name}") = "owned"
     },
     var.tags,
   )
@@ -118,14 +118,14 @@ data "template_file" "master_policy_json" {
 }
 
 resource "aws_iam_policy" "master_policy" {
-  name        = "${local.cluster_name}-master"
+  name        = "${var.cluster_name}-master"
   path        = "/"
-  description = "Policy for role ${local.cluster_name}-master"
+  description = "Policy for role ${var.cluster_name}-master"
   policy      = data.template_file.master_policy_json.rendered
 }
 
 resource "aws_iam_role" "master_role" {
-  name = "${local.cluster_name}-master"
+  name = "${var.cluster_name}-master"
 
   assume_role_policy = <<EOF
 {
@@ -152,7 +152,7 @@ resource "aws_iam_policy_attachment" "master-attach" {
 }
 
 resource "aws_iam_instance_profile" "master_profile" {
-  name = "${local.cluster_name}-master"
+  name = "${var.cluster_name}-master"
   role = aws_iam_role.master_role.name
 }
 
@@ -165,14 +165,14 @@ data "template_file" "node_policy_json" {
 }
 
 resource "aws_iam_policy" "node_policy" {
-  name = "${local.cluster_name}-node"
+  name = "${var.cluster_name}-node"
   path = "/"
-  description = "Policy for role ${local.cluster_name}-node"
+  description = "Policy for role ${var.cluster_name}-node"
   policy = data.template_file.node_policy_json.rendered
 }
 
 resource "aws_iam_role" "node_role" {
-  name = "${local.cluster_name}-node"
+  name = "${var.cluster_name}-node"
 
   assume_role_policy = <<EOF
 {
@@ -199,7 +199,7 @@ resource "aws_iam_policy_attachment" "node-attach" {
 }
 
 resource "aws_iam_instance_profile" "node_profile" {
-  name = "${local.cluster_name}-node"
+  name = "${var.cluster_name}-node"
   role = aws_iam_role.node_role.name
 }
 
@@ -212,12 +212,12 @@ data "template_file" "init_master" {
 
   vars = {
     kubeadm_token = data.template_file.kubeadm_token.rendered
-    dns_name      = "${local.cluster_name}.${var.hosted_zone}"
+    dns_name      = "${var.cluster_name}.${var.hosted_zone}"
     ip_address    = aws_eip.k8s_master_eip.public_ip
-    cluster_name  = local.cluster_name
+    cluster_name  = var.cluster_name
     addons        = join(" ", var.addons)
     aws_region    = var.region
-    asg_name      = "${local.cluster_name}-nodes"
+    asg_name      = "${var.cluster_name}-nodes"
     asg_min_nodes = var.min_worker_count
     asg_max_nodes = var.max_worker_count
     aws_subnets   = join(" ", concat(var.worker_subnet_ids, [var.master_subnet_id]))
@@ -256,7 +256,7 @@ data "template_file" "init_node" {
     kubeadm_token     = data.template_file.kubeadm_token.rendered
     master_ip         = aws_eip.k8s_master_eip.public_ip
     master_private_ip = aws_instance.k8s_master.private_ip
-    dns_name          = "${local.cluster_name}.${var.hosted_zone}"
+    dns_name          = "${var.cluster_name}.${var.hosted_zone}"
   }
 }
 
@@ -300,8 +300,8 @@ resource "aws_instance" "k8s_master" {
 
   tags = merge(
     {
-      "Name"                                                 = join("-", [local.cluster_name, "master"])
-      format("kubernetes.io/cluster/%v", local.cluster_name) = "owned"
+      "Name"                                                 = join("-", [var.cluster_name, "master"])
+      format("kubernetes.io/cluster/%v", var.cluster_name) = "owned"
     },
     var.tags,
   )
@@ -330,7 +330,7 @@ resource "aws_eip_association" "master_assoc" {
 ##### K8s Nodes - AWS EC2 instance ######
 #########################################
 resource "aws_launch_configuration" "k8s_nodes" {
-  name_prefix          = "${local.cluster_name}-nodes-"
+  name_prefix          = "${var.cluster_name}-nodes-"
   image_id             = var.k8s_ami_id
   instance_type        = var.worker_instance_type
   key_name             = var.key_name
@@ -360,30 +360,28 @@ resource "aws_autoscaling_group" "k8s_nodes_asg" {
 
   vpc_zone_identifier = var.worker_subnet_ids
 
-  name                 = "${local.cluster_name}-nodes"
+  name                 = "${var.cluster_name}-nodes"
   max_size             = var.max_worker_count
   min_size             = var.min_worker_count
   desired_capacity     = var.min_worker_count
   launch_configuration = aws_launch_configuration.k8s_nodes.name
 
   tags = concat(
-    [
-    {
-      "key"                 = "kubernetes.io/cluster/${local.cluster_name}"
-      "value"               = "owned"
-      "propagate_at_launch" = true
+    [{
+      key                 = "kubernetes.io/cluster/${var.cluster_name}"
+      value               = "owned"
+      propagate_at_launch = true
     },
     {
-      "key"                 = "Name"
-      "value"               = "${local.cluster_name}-node"
-      "propagate_at_launch" = true
-    },
-  ],
+      key                 = "Name"
+      value               = "${var.cluster_name}-node"
+      propagate_at_launch = true
+    }],
     var.tags2,
   )
 
   lifecycle {
-    ignore_changes = [tags, desired_capacity]
+    ignore_changes = [desired_capacity]
   }
 }
 
@@ -399,7 +397,7 @@ data "aws_route53_zone" "dns_zone" {
 
 resource "aws_route53_record" "k8s_master_dns" {
   zone_id = data.aws_route53_zone.dns_zone.zone_id
-  name    = "${local.cluster_name}.${var.hosted_zone}"
+  name    = "${var.cluster_name}.${var.hosted_zone}"
   type    = "A"
   records = [aws_eip.k8s_master_eip.public_ip]
   ttl     = 300
