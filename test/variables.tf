@@ -6,11 +6,15 @@ variable "vpc_cidr_range" {
   type        = string
 }
 
-variable "worker_subnet_ids" {
+variable "private_subnets" {
   type        = list
 }
 
-variable "master_subnet_id" {
+variable "public_subnets" {
+  type        = list
+}
+
+variable "database_subnets" {
   type        = list
 }
 

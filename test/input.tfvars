@@ -1,12 +1,10 @@
 region = "us-east-1"
-vpc_cidr_range = "10.100.0.0/16"
-
-worker_subnet_ids = ["subnet-63c52e07", "subnet-037b1b2f", "subnet-7d411b35"]
-master_subnet_id  = subnet-aec52eca
-
-bastion_traffic_cidr = ["10.0.0.0/8"]
-k8s_traffic_cidr = ["10.0.0.0/8"]
-key_name = "magellan"
+vpc_cidr_range = "101.0.0.0/16"
+private_subnets = ["101.0.1.0/24", "101.0.2.0/24", "101.0.3.0/24"]
+public_subnets  = ["101.0.101.0/24", "101.0.102.0/24", "101.0.103.0/24"]
+bastion_traffic_cidr = ["101.0.0.0/16"]
+k8s_traffic_cidr = ["101.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+key_name = "fab-training"
 k8s_ami_id = "ami-0947d2ba12ee1ff75"
 min_worker_count = 2
 max_worker_count = 3

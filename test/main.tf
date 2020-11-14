@@ -14,6 +14,40 @@ resource "random_string" "suffix" {
   special = false
 }
 
+module "aws_network" {
+  source          = "terraform-aws-modules/vpc/aws"
+
+  name            = "kubernetes-vpc"
+  cidr            =  var.vpc_cidr_range
+
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  azs             = data.aws_availability_zones.zones.names
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
+
+  enable_nat_gateway = false
+  single_nat_gateway = false
+  enable_vpn_gateway = false
+
+  tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "Environment"                                 = "development"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
+    "Environment"                                 = "development"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+    "Environment"                                 = "development"
+  }
+}
 
 ##############################
 ##### AWS Security Group #####
@@ -193,7 +227,7 @@ data "template_file" "init_master" {
     asg_name      = "${local.cluster_name}-nodes"
     asg_min_nodes = var.min_worker_count
     asg_max_nodes = var.max_worker_count
-    aws_subnets   = join(" ", concat(var.worker_subnet_ids, [var.master_subnet_id]))
+    aws_subnets   = join(" ", concat(module.aws_network.private_subnets, [module.aws_network.private_subnets[0]]))
   }
 }
 
@@ -259,7 +293,7 @@ resource "aws_instance" "master" {
 
   key_name = var.key_name
 
-  subnet_id = var.master_subnet_id
+  subnet_id = module.aws_network.private_subnets[0]
 
   associate_public_ip_address = false
 
@@ -331,7 +365,7 @@ resource "aws_launch_configuration" "nodes" {
 }
 
 resource "aws_autoscaling_group" "nodes" {
-  vpc_zone_identifier = var.worker_subnet_ids
+  vpc_zone_identifier = module.aws_network.private_subnets
 
   name                 = "${local.cluster_name}-nodes"
   max_size             = var.max_worker_count
