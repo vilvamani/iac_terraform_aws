@@ -359,13 +359,13 @@ resource "aws_launch_configuration" "k8s_nodes" {
 variable "extra_tags" {
   default = [
     {
-      key                 = "kubernetes.io/cluster/${var.cluster_name}"
+      key                 = "kubernetes.io/cluster/${local.cluster_name}"
       value               = "owned"
       propagate_at_launch = true
     },
     {
       key                 = "Name"
-      value               = "${var.cluster_name}-node"
+      value               = "${local.cluster_name}-node"
       propagate_at_launch = true
     },
   ]
