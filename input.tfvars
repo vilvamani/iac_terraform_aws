@@ -17,6 +17,14 @@ worker_instance_type = "t2.medium"
 hosted_zone = ""
 hosted_zone_private = true
 
+addons = [
+    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/storage-class.yaml",
+    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/heapster.yaml",
+    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/dashboard.yaml",
+    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/external-dns.yaml",
+    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/autoscaler.yaml"
+]
+
 k8s_master_tags = {
     Application = "AWS-Kubernetes"
 }

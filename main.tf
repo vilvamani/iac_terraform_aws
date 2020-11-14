@@ -205,6 +205,7 @@ data "template_file" "init_master" {
     dns_name      = "${var.cluster_name}.${var.hosted_zone}"
     ip_address    = aws_eip.k8s_master_eip.public_ip
     cluster_name  = var.cluster_name
+    addons        = join(" ", var.addons)
     aws_region    = var.region
     asg_name      = "${var.cluster_name}-nodes"
     asg_min_nodes = var.min_worker_count

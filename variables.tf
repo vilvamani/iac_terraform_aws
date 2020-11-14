@@ -58,6 +58,11 @@ variable "hosted_zone_private" {
   type        = string
 }
 
+variable "addons" {
+  description = "list of YAML files with Kubernetes addons which should be installed"
+  type        = list(string)
+}
+
 variable "k8s_master_tags" {
   type        = map(string)
 }

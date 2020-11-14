@@ -15,6 +15,7 @@ export ASG_MIN_NODES="${asg_min_nodes}"
 export ASG_MAX_NODES="${asg_max_nodes}"
 export AWS_REGION=${aws_region}
 export AWS_SUBNETS="${aws_subnets}"
+export ADDONS="${addons}"
 export KUBERNETES_VERSION="1.19.3"
 
 # Set this only after setting the defaults
@@ -156,3 +157,11 @@ cp /home/centos/kubeconfig_ip /home/centos/kubeconfig
 sed -i "s/server: https:\/\/$IP_ADDRESS:6443/server: https:\/\/$DNS_NAME:6443/g" /home/centos/kubeconfig
 chown centos:centos /home/centos/kubeconfig
 chmod 0600 /home/centos/kubeconfig
+
+# Load addons
+for ADDON in $ADDONS
+do
+  curl $ADDON | envsubst > /tmp/addon.yaml
+  kubectl apply -f /tmp/addon.yaml
+  rm /tmp/addon.yaml
+done
