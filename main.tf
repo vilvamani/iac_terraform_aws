@@ -369,14 +369,14 @@ resource "aws_autoscaling_group" "k8s_nodes_asg" {
   tags = concat(
     [
     {
-      key                 = "kubernetes.io/cluster/${local.cluster_name}"
-      value               = "owned"
-      propagate_at_launch = true
+      "key"                 = "kubernetes.io/cluster/${local.cluster_name}"
+      "value"               = "owned"
+      "propagate_at_launch" = true
     },
     {
-      key                 = "Name"
-      value               = "${local.cluster_name}-node"
-      propagate_at_launch = true
+      "key"                 = "Name"
+      "value"               = "${local.cluster_name}-node"
+      "propagate_at_launch" = true
     },
   ],
     var.tags2,
