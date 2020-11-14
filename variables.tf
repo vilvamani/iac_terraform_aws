@@ -11,7 +11,7 @@ variable "worker_subnet_ids" {
 }
 
 variable "master_subnet_id" {
-  type        = list
+  type        = string
 }
 
 variable "bastion_traffic_cidr" {
