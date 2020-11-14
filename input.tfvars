@@ -13,7 +13,7 @@ max_worker_count = 6
 master_instance_type = "t2.medium"
 worker_instance_type = "t2.medium"
 hosted_zone = ""
-hosted_zone_private = false
+hosted_zone_private = true
 
 addons = [
     "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/storage-class.yaml",
@@ -27,10 +27,8 @@ tags = {
     Application = "AWS-Kubernetes"
 }
 
-tags2 = [
-    {
-      key                 = "Application"
-      value               = "AWS-Kubernetes"
-      propagate_at_launch = true
-    }
-]
+tags2 = {
+    key                 = "Application"
+    value               = "AWS-Kubernetes"
+    propagate_at_launch = true
+}

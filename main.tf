@@ -275,7 +275,7 @@ data "template_cloudinit_config" "node_cloud_init" {
 ##### K8s Master - AWS EC2 instance #####
 #########################################
 
-resource "aws_eip" "master" {
+resource "aws_eip" "k8s-master" {
   vpc = true
 }
 
@@ -329,7 +329,7 @@ resource "aws_eip_association" "master_assoc" {
 #########################################
 ##### K8s Nodes - AWS EC2 instance ######
 #########################################
-resource "aws_launch_configuration" "nodes" {
+resource "aws_launch_configuration" "k8s-nodes" {
   name_prefix          = "${local.cluster_name}-nodes-"
   image_id             = var.k8s_ami_id
   instance_type        = var.worker_instance_type
@@ -356,7 +356,9 @@ resource "aws_launch_configuration" "nodes" {
   }
 }
 
-resource "aws_autoscaling_group" "nodes" {
+resource "aws_autoscaling_group" "k8s-nodes-asg" {
+  depends_on = [aws_instance.k8s-master]
+
   vpc_zone_identifier = var.worker_subnet_ids
 
   name                 = "${local.cluster_name}-nodes"
@@ -365,8 +367,8 @@ resource "aws_autoscaling_group" "nodes" {
   desired_capacity     = var.min_worker_count
   launch_configuration = aws_launch_configuration.nodes.name
 
-  tags = concat(
-    [{
+  tags = merge(
+    {
       key                 = "kubernetes.io/cluster/${local.cluster_name}"
       value               = "owned"
       propagate_at_launch = true
@@ -375,7 +377,7 @@ resource "aws_autoscaling_group" "nodes" {
       key                 = "Name"
       value               = "${local.cluster_name}-node"
       propagate_at_launch = true
-    }],
+    },
     var.tags2,
   )
 
