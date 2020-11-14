@@ -2,10 +2,6 @@
 
 exec &> /var/log/init-aws-kubernetes-master.log
 
-mkdir -p ~/test
-
-yum install -y git
-
 set -o verbose
 set -o errexit
 set -o pipefail
@@ -114,10 +110,10 @@ apiServer:
   - $DNS_NAME
   - $IP_ADDRESS
   extraArgs:
-    cloud-provider: aws
+    authorization-mode: "Node,RBAC"
   timeoutForControlPlane: 5m0s
 certificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
+clusterName: $CLUSTER_NAME
 controllerManager:
   extraArgs:
     cloud-provider: aws
@@ -129,7 +125,6 @@ etcd:
 imageRepository: k8s.gcr.io
 kubernetesVersion: v$KUBERNETES_VERSION
 networking:
-  podNetworkCidr: 192.168.0.0/16
   dnsDomain: cluster.local
   podSubnet: ""
   serviceSubnet: 10.96.0.0/12
