@@ -159,9 +159,9 @@ chown centos:centos /home/centos/kubeconfig
 chmod 0600 /home/centos/kubeconfig
 
 # Load addons
-for ADDON in $ADDONS
-do
-  curl $ADDON | envsubst > /tmp/addon.yaml
-  kubectl apply -f /tmp/addon.yaml
-  rm /tmp/addon.yaml
-done
+#for ADDON in $ADDONS
+#do
+#  curl $ADDON | envsubst > /tmp/addon.yaml
+#  kubectl apply -f /tmp/addon.yaml
+#  rm /tmp/addon.yaml
+#done
