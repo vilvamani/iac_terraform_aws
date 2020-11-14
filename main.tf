@@ -292,7 +292,7 @@ resource "aws_instance" "k8s_master" {
       "Name"                                                 = join("-", [var.cluster_name, "master"])
       format("kubernetes.io/cluster/%v", var.cluster_name) = "owned"
     },
-    var.tags,
+    var.k8s_master_tags,
   )
 
   root_block_device {
