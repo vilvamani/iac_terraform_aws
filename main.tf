@@ -356,6 +356,21 @@ resource "aws_launch_configuration" "k8s_nodes" {
   }
 }
 
+variable "extra_tags" {
+  default = [
+    {
+      key                 = "kubernetes.io/cluster/${var.cluster_name}"
+      value               = "owned"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Name"
+      value               = "${var.cluster_name}-node"
+      propagate_at_launch = true
+    },
+  ]
+}
+
 resource "aws_autoscaling_group" "k8s_nodes_asg" {
 
   vpc_zone_identifier = var.worker_subnet_ids
@@ -367,13 +382,7 @@ resource "aws_autoscaling_group" "k8s_nodes_asg" {
   launch_configuration = aws_launch_configuration.k8s_nodes.name
 
   tags = concat(
-    [
-      {
-        "key"                 = "Name"
-        "value"               = "${local.cluster_name}-node"
-        "propagate_at_launch" = true
-      },
-    ],
+    var.extra_tags,
     var.tags2,
   )
 
