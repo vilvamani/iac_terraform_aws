@@ -63,5 +63,5 @@ variable "tags" {
 }
 
 variable "tags2" {
-  type        = map(string)
+  type        = list(object({key = string, value = string, propagate_at_launch = bool}))
 }

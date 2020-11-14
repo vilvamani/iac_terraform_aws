@@ -366,17 +366,14 @@ resource "aws_autoscaling_group" "k8s_nodes_asg" {
   desired_capacity     = var.min_worker_count
   launch_configuration = aws_launch_configuration.k8s_nodes.name
 
-  tag = concat(
-    [{
-      key                 = "kubernetes.io/cluster/${local.cluster_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "Name"
-      value               = "${local.cluster_name}-node"
-      propagate_at_launch = true
-    }],
+  tags = concat(
+    [
+      {
+        "key"                 = "Name"
+        "value"               = "${local.cluster_name}-node"
+        "propagate_at_launch" = true
+      },
+    ],
     var.tags2,
   )
 
