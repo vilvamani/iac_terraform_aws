@@ -6,10 +6,6 @@ variable "cluster_name" {
   description = "Name of the AWS Kubernetes cluster - will be used to name all created resources"
 }
 
-variable "vpc_cidr_range" {
-  type        = string
-}
-
 variable "worker_subnet_ids" {
   type        = list
 }

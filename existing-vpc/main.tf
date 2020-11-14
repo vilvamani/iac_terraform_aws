@@ -8,6 +8,7 @@ data "aws_availability_zones" "zones" {}
 module "k8s_cluster" {
   source                = "../modules"
   
+  region                = var.region
   cluster_name          = var.cluster_name
   master_subnet_id      = var.master_subnet_id
   worker_subnet_ids     = var.worker_subnet_ids
