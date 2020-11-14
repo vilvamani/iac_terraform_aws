@@ -285,7 +285,7 @@ resource "aws_instance" "master" {
 
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = "8"
+    volume_size           = "100"
     delete_on_termination = true
   }
 
@@ -324,7 +324,7 @@ resource "aws_launch_configuration" "nodes" {
 
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = "8"
+    volume_size           = "100"
     delete_on_termination = true
   }
 
