@@ -396,7 +396,7 @@ data "aws_route53_zone" "dns_zone" {
 
 resource "aws_route53_record" "master" {
   zone_id = data.aws_route53_zone.dns_zone.zone_id
-  name    = "${var.cluster_name}.${var.hosted_zone}"
+  name    = "${local.cluster_name}.${var.hosted_zone}"
   type    = "A"
   records = [aws_eip.master.public_ip]
   ttl     = 300
