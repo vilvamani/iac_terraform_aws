@@ -42,7 +42,7 @@ resource "aws_security_group_rule" "allow_ssh_from_cidr" {
   to_port   = 22
   protocol  = "tcp"
 
-  cidr_blocks       = [var.k8s_traffic_cidr]
+  cidr_blocks       = var.k8s_traffic_cidr
   security_group_id = aws_security_group.kubernetes.id
 }
 
@@ -62,7 +62,7 @@ resource "aws_security_group_rule" "allow_cluster_outsidetalk" {
   from_port                = 0
   to_port                  = 0
   protocol                 = "-1"
-  cidr_blocks              = [var.k8s_traffic_cidr]
+  cidr_blocks              = var.k8s_traffic_cidr
   security_group_id        = aws_security_group.kubernetes.id
 }
 
@@ -73,7 +73,7 @@ resource "aws_security_group_rule" "allow_api_from_cidr" {
   to_port   = 6443
   protocol  = "tcp"
 
-  cidr_blocks       = [var.k8s_traffic_cidr]
+  cidr_blocks       = var.k8s_traffic_cidr
   security_group_id = aws_security_group.kubernetes.id
 }
 

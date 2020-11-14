@@ -9,5 +9,5 @@ output "kubeadm_token" {
 
 output "k8s_master_public_ip" {
   description = "Cluster IP address"
-  value       = aws_eip.master.public_ip
+  value       = aws_eip.k8s_master_eip.public_ip
 }
