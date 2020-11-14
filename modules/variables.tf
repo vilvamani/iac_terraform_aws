@@ -1,21 +1,21 @@
+variable "region" {
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "Name of the AWS Kubernetes cluster - will be used to name all created resources"
+}
+
 variable "vpc_cidr_range" {
   type        = string
 }
 
-variable "private_subnets" {
+variable "worker_subnet_ids" {
   type        = list
 }
 
-variable "public_subnets" {
-  type        = list
-}
-
-variable "database_subnets" {
-  type        = list
-}
-
-variable "bastion_traffic_cidr" {
-  type        = list  
+variable "master_subnet_id" {
+  type        = string
 }
 
 variable "k8s_traffic_cidr" {
@@ -55,13 +55,14 @@ variable "hosted_zone_private" {
 }
 
 variable "addons" {
-  type        = list  
+  description = "list of YAML files with Kubernetes addons which should be installed"
+  type        = list(string)
 }
 
-variable "tags" {
+variable "k8s_master_tags" {
   type        = map(string)
 }
 
-variable "tags2" {
+variable "k8s_node_tags" {
   type        = list(object({key = string, value = string, propagate_at_launch = bool}))
 }

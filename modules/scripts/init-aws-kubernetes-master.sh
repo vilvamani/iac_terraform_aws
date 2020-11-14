@@ -38,7 +38,6 @@ do
   aws ec2 create-tags --resources $SUBNET --tags Key=kubernetes.io/cluster/$CLUSTER_NAME,Value=shared --region $AWS_REGION
 done
 
-yum install -y git
 # Install docker
 yum install -y yum-utils device-mapper-persistent-data lvm2 docker
 
@@ -137,6 +136,7 @@ kubeadm init --config /tmp/kubeadm.yaml
 
 # Use the local kubectl config for further kubectl operations
 export KUBECONFIG=/etc/kubernetes/admin.conf
+export KUBECONFIG=/etc/kubernetes/admin.conf >> ~/.bash_profile
 
 # Install calico
 kubectl apply -f /tmp/calico.yaml
