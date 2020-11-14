@@ -308,7 +308,7 @@ resource "aws_instance" "master" {
   associate_public_ip_address = false
 
   vpc_security_group_ids = [
-    module.aws_k8s_sg.this_security_group_id,
+    aws_security_group.kubernetes.id,
   ]
 
   iam_instance_profile = aws_iam_instance_profile.master_profile.name
@@ -355,7 +355,7 @@ resource "aws_launch_configuration" "nodes" {
   iam_instance_profile = aws_iam_instance_profile.node_profile.name
 
   security_groups = [
-    module.aws_k8s_sg.this_security_group_id,
+    aws_security_group.kubernetes.id,
   ]
 
   associate_public_ip_address = false
