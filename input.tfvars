@@ -2,7 +2,7 @@ region = "us-east-1"
 vpc_cidr_range = "10.100.0.0/16"
 
 worker_subnet_ids = ["subnet-63c52e07", "subnet-037b1b2f", "subnet-7d411b35"]
-master_subnet_id  = subnet-aec52eca
+master_subnet_id  = "subnet-aec52eca"
 
 bastion_traffic_cidr = ["10.0.0.0/8"]
 k8s_traffic_cidr = ["10.0.0.0/8"]
