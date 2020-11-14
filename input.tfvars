@@ -2,14 +2,14 @@ region = "us-east-1"
 vpc_cidr_range = "10.100.0.0/16"
 
 worker_subnet_ids = ["subnet-63c52e07", "subnet-037b1b2f", "subnet-7d411b35"]
-master_subnet_id  = "subnet-aec52eca"
+master_subnet_id  = "subnet-eb575c8e"
 
 bastion_traffic_cidr = ["10.0.0.0/8"]
 k8s_traffic_cidr = ["10.0.0.0/8"]
 key_name = "magellan"
 k8s_ami_id = "ami-0947d2ba12ee1ff75"
-min_worker_count = 2
-max_worker_count = 3
+min_worker_count = 3
+max_worker_count = 6
 master_instance_type = "t2.medium"
 worker_instance_type = "t2.medium"
 hosted_zone = "vilvamani.xyz"
