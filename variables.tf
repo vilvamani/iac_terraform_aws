@@ -2,6 +2,10 @@ variable "region" {
   type        = string
 }
 
+variable "cluster_name" {
+  description = "Name of the AWS Kubernetes cluster - will be used to name all created resources"
+}
+
 variable "vpc_cidr_range" {
   type        = string
 }
@@ -54,18 +58,10 @@ variable "hosted_zone_private" {
   type        = string
 }
 
-variable "addons" {
-  type        = list  
-}
-
-variable "tags" {
+variable "k8s_master_tags" {
   type        = map(string)
 }
 
-variable "tags2" {
+variable "k8s_node_tags" {
   type        = list(object({key = string, value = string, propagate_at_launch = bool}))
-}
-
-variable "cluster_name" {
-  description = "Name of the AWS Kubernetes cluster - will be used to name all created resources"
 }

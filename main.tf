@@ -5,16 +5,6 @@ provider "aws" {
 
 data "aws_availability_zones" "zones" {}
 
-locals {
-  cluster_name = "training-k8s-${random_string.suffix.result}"
-}
-
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
-
-
 ##############################
 ##### AWS Security Group #####
 ##############################
@@ -31,7 +21,7 @@ resource "aws_security_group" "kubernetes" {
       "Name"                                               = "${var.cluster_name}"
       format("kubernetes.io/cluster/%v", "${var.cluster_name}") = "owned"
     },
-    var.tags,
+    var.k8s_master_tags,
   )
 }
 
@@ -215,7 +205,6 @@ data "template_file" "init_master" {
     dns_name      = "${var.cluster_name}.${var.hosted_zone}"
     ip_address    = aws_eip.k8s_master_eip.public_ip
     cluster_name  = var.cluster_name
-    addons        = join(" ", var.addons)
     aws_region    = var.region
     asg_name      = "${var.cluster_name}-nodes"
     asg_min_nodes = var.min_worker_count
@@ -377,7 +366,7 @@ resource "aws_autoscaling_group" "k8s_nodes_asg" {
       value               = "${var.cluster_name}-node"
       propagate_at_launch = true
     }],
-    var.tags2,
+    var.k8s_node_tags,
   )
 
   lifecycle {
