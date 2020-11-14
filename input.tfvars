@@ -27,8 +27,11 @@ tags = {
     Application = "AWS-Kubernetes"
 }
 
-tags2 = {
-    key                 = "Application"
-    value               = "AWS-Kubernetes"
-    propagate_at_launch = true
-}
+# Tags in a different format for Auto Scaling Group
+tags2 = [
+    {
+        key                 = "Application"
+        value               = "AWS-Kubernetes"
+        propagate_at_launch = true
+    }
+]
