@@ -44,7 +44,7 @@ module "aws_k8s_sg" {
   ingress_rules            = ["https-443-tcp"]
   ingress_with_cidr_blocks = [
     {
-      from_port   = 30000
+      from_port   = 0
       to_port     = 32000
       protocol    = "tcp"
       description = "K8s-service ports"
@@ -52,15 +52,6 @@ module "aws_k8s_sg" {
     }
   ]
 
-  ingress_with_cidr_blocks = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "tcp"
-      description = "K8s-service ports"
-      cidr_blocks = "10.0.0.0/8"
-    }
-  ]
 }
 
 ###################################
