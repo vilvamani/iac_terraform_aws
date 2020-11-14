@@ -46,6 +46,17 @@ resource "aws_security_group_rule" "allow_ssh_from_cidr" {
   security_group_id = aws_security_group.kubernetes.id
 }
 
+# Allow SSH connections only from specific CIDR (TODO)
+resource "aws_security_group_rule" "allow_nodeport_from_cidr" {
+  type      = "ingress"
+  from_port = 30000
+  to_port   = 32000
+  protocol  = "tcp"
+
+  cidr_blocks       = var.k8s_traffic_cidr
+  security_group_id = aws_security_group.kubernetes.id
+}
+
 # Allow the security group members to talk with each other without restrictions
 resource "aws_security_group_rule" "allow_cluster_crosstalk" {
   type                     = "ingress"
