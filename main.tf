@@ -57,7 +57,7 @@ resource "aws_security_group_rule" "allow_cluster_crosstalk" {
 }
 
 # Allow the CIDR Range to talk with K8s Cluster
-resource "aws_security_group_rule" "allow_cluster_crosstalk" {
+resource "aws_security_group_rule" "allow_cluster_outsidetalk" {
   type                     = "ingress"
   from_port                = 0
   to_port                  = 0

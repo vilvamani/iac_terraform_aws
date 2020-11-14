@@ -18,10 +18,6 @@ variable "master_subnet_id" {
   type        = string
 }
 
-variable "bastion_traffic_cidr" {
-  type        = list  
-}
-
 variable "k8s_traffic_cidr" {
   type        = list  
 }
