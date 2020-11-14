@@ -1,5 +1,5 @@
 region = "us-east-1"
-cluster_name  = "training-k8s-cluster"
+cluster_name  = "training-k8s"
 
 vpc_cidr_range = "10.100.0.0/16"
 
