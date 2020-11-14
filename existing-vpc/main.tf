@@ -3,7 +3,9 @@ provider "aws" {
   version     = "~> 3.0"
 }
 
-data "aws_availability_zones" "zones" {}
+############################################
+##### Kubernetes Cluster using kubeadm #####
+############################################
 
 module "k8s_cluster" {
   source                = "../modules"
