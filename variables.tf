@@ -46,7 +46,11 @@ variable "worker_instance_type" {
   type        = string
 }
 
-variable "hosted_zone_id" {
+variable "hosted_zone" {
+  type        = string
+}
+
+variable "hosted_zone_private" {
   type        = string
 }
 

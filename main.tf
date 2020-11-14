@@ -389,13 +389,14 @@ resource "aws_autoscaling_group" "nodes" {
 ###################################
 
 
-data "aws_route53_zone" "hosted_zone_id" {
-  id         = var.hosted_zone_id
+data "aws_route53_zone" "dns_zone" {
+  name         = "${var.hosted_zone}."
+  private_zone = var.hosted_zone_private
 }
 
 resource "aws_route53_record" "master" {
-  zone_id = var.hosted_zone_id
-  name    = "${var.cluster_name}.${data.aws_route53_zone.dns_zone.name}"
+  zone_id = data.aws_route53_zone.dns_zone.zone_id
+  name    = "${var.cluster_name}.${var.hosted_zone}"
   type    = "A"
   records = [aws_eip.master.public_ip]
   ttl     = 300

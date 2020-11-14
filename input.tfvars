@@ -13,6 +13,7 @@ max_worker_count = 6
 master_instance_type = "t2.medium"
 worker_instance_type = "t2.medium"
 hosted_zone_id = ""
+hosted_zone_private = false
 
 addons = [
     "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/storage-class.yaml",
