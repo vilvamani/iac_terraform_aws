@@ -24,12 +24,12 @@ data "aws_subnet" "cluster_subnet" {
 
 resource "aws_security_group" "kubernetes" {
   vpc_id = data.aws_subnet.cluster_subnet.vpc_id
-  name   = var.cluster_name
+  name   = "${local.cluster_name}"
 
   tags = merge(
     {
-      "Name"                                               = var.cluster_name
-      format("kubernetes.io/cluster/%v", var.cluster_name) = "owned"
+      "Name"                                               = "${local.cluster_name}"
+      format("kubernetes.io/cluster/%v", "${local.cluster_name}") = "owned"
     },
     var.tags,
   )
