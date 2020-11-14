@@ -22,36 +22,59 @@ data "aws_subnet" "cluster_subnet" {
   id = var.master_subnet_id
 }
 
-module "aws_bastion_sg" {
-  source = "terraform-aws-modules/security-group/aws"
+resource "aws_security_group" "kubernetes" {
+  vpc_id = data.aws_subnet.cluster_subnet.vpc_id
+  name   = "${local.cluster_name}"
 
-  name        = "bastion-sg"
-  description = "bastion-sg"
-  vpc_id      = data.aws_subnet.cluster_subnet.vpc_id
-
-  ingress_cidr_blocks      = var.bastion_traffic_cidr
-  ingress_rules            = ["ssh-tcp"]
+  tags = merge(
+    {
+      "Name"                                               = "${local.cluster_name}"
+      format("kubernetes.io/cluster/%v", "${local.cluster_name}") = "owned"
+    },
+    var.tags,
+  )
 }
 
-module "aws_k8s_sg" {
-  source = "terraform-aws-modules/security-group/aws"
+# Allow outgoing connectivity
+resource "aws_security_group_rule" "allow_all_outbound_from_kubernetes" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.kubernetes.id
+}
 
-  name        = "k8s-sg"
-  description = "k8s-sg"
-  vpc_id      = data.aws_subnet.cluster_subnet.vpc_id
+# Allow SSH connections only from specific CIDR (TODO)
+resource "aws_security_group_rule" "allow_ssh_from_cidr" {
+  type      = "ingress"
+  from_port = 22
+  to_port   = 22
+  protocol  = "tcp"
 
-  ingress_cidr_blocks      = var.k8s_traffic_cidr
-  ingress_rules            = ["https-443-tcp"]
-  ingress_with_cidr_blocks = [
-    {
-      from_port   = 0
-      to_port     = 32000
-      protocol    = "tcp"
-      description = "K8s-service ports"
-      cidr_blocks = "10.0.0.0/8"
-    }
-  ]
+  cidr_blocks       = ["10.0.0.0/8"]]
+  security_group_id = aws_security_group.kubernetes.id
+}
 
+# Allow the security group members to talk with each other without restrictions
+resource "aws_security_group_rule" "allow_cluster_crosstalk" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.kubernetes.id
+  security_group_id        = aws_security_group.kubernetes.id
+}
+
+# Allow API connections only from specific CIDR (TODO)
+resource "aws_security_group_rule" "allow_api_from_cidr" {
+  type      = "ingress"
+  from_port = 6443
+  to_port   = 6443
+  protocol  = "tcp"
+
+  cidr_blocks       = ["10.0.0.0/8"]
+  security_group_id = aws_security_group.kubernetes.id
 }
 
 ###################################
@@ -268,7 +291,7 @@ resource "aws_instance" "master" {
   associate_public_ip_address = false
 
   vpc_security_group_ids = [
-    module.aws_k8s_sg.this_security_group_id,
+    aws_security_group.kubernetes.id,
   ]
 
   iam_instance_profile = aws_iam_instance_profile.master_profile.name
@@ -306,7 +329,7 @@ resource "aws_eip_association" "master_assoc" {
 #########################################
 ##### K8s Nodes - AWS EC2 instance ######
 #########################################
-
+/*
 resource "aws_launch_configuration" "nodes" {
   name_prefix          = "${local.cluster_name}-nodes-"
   image_id             = var.k8s_ami_id
@@ -315,7 +338,7 @@ resource "aws_launch_configuration" "nodes" {
   iam_instance_profile = aws_iam_instance_profile.node_profile.name
 
   security_groups = [
-    module.aws_k8s_sg.this_security_group_id,
+    aws_security_group.kubernetes.id,
   ]
 
   associate_public_ip_address = false
@@ -361,3 +384,4 @@ resource "aws_autoscaling_group" "nodes" {
     ignore_changes = [desired_capacity]
   }
 }
+*/

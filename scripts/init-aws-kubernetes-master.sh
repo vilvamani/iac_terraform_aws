@@ -2,6 +2,10 @@
 
 exec &> /var/log/init-aws-kubernetes-master.log
 
+mkdir -p ~/test
+
+yum install -y git
+
 set -o verbose
 set -o errexit
 set -o pipefail
