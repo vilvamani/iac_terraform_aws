@@ -364,7 +364,7 @@ resource "aws_autoscaling_group" "k8s_nodes_asg" {
   max_size             = var.max_worker_count
   min_size             = var.min_worker_count
   desired_capacity     = var.min_worker_count
-  launch_configuration = aws_launch_configuration.nodes.name
+  launch_configuration = aws_launch_configuration.k8s_nodes.name
 
   tags = merge(
     {
