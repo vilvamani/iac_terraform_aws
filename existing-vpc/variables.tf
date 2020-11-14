@@ -26,7 +26,7 @@ variable "key_name" {
   type        = string
 }
 
-variable "k8s_ami_id" {
+variable "centos_ami_id" {
   type        = string
 }
 

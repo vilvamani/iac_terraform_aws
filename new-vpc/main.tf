@@ -54,7 +54,7 @@ module "k8s_cluster" {
   worker_subnet_ids     = module.aws_network.private_subnets
   k8s_traffic_cidr      = var.k8s_traffic_cidr
   key_name              = var.key_name
-  k8s_ami_id            = var.k8s_ami_id
+  k8s_ami_id            = var.centos_ami_id
   min_worker_count      = var.min_worker_count
   max_worker_count      = var.max_worker_count
   master_instance_type  = var.master_instance_type

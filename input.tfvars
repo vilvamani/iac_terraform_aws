@@ -1,17 +1,20 @@
 region                  = "us-east-1"
 cluster_name            = "training-k8s"
 
-vpc_cidr_range          = "10.100.0.0/16"
+# This is used while lunching k8s cluster on the new vpc
+vpc_cidr_range          = "101.0.0.0/16"
 private_subnets         = ["101.0.1.0/24", "101.0.2.0/24", "101.0.3.0/24"]
 public_subnets          = ["101.0.101.0/24", "101.0.102.0/24", "101.0.103.0/24"]
 
-worker_subnet_ids       = ["subnet-63c52e07", "subnet-037b1b2f", "subnet-7d411b35"]
-master_subnet_id        = "subnet-63c52e07"
+# This is used while lunching k8s cluster on the existing aws vpc
+worker_subnet_ids       = ["subnet-xxxxxxx", "subnet-xxxxxxx", "subnet-xxxxxxx"]
+master_subnet_id        = "subnet-xxxxxxx"
 
 k8s_traffic_cidr        = ["10.0.0.0/8"]
 
-key_name                = "magellan"
-k8s_ami_id              = "ami-0affd4508a5d2481b"
+key_name                = ""
+
+centos_ami_id           = "ami-0affd4508a5d2481b"
 min_worker_count        = 2
 max_worker_count        = 6
 master_instance_type    = "t2.medium"
