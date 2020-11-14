@@ -22,77 +22,46 @@ data "aws_subnet" "cluster_subnet" {
   id = var.master_subnet_id
 }
 
-resource "aws_security_group" "kubernetes" {
-  vpc_id = data.aws_subnet.cluster_subnet.vpc_id
-  name   = "${local.cluster_name}"
+module "aws_bastion_sg" {
+  source = "terraform-aws-modules/security-group/aws"
 
-  tags = merge(
+  name        = "bastion-sg"
+  description = "bastion-sg"
+  vpc_id      = data.aws_subnet.cluster_subnet.vpc_id
+
+  ingress_cidr_blocks      = var.bastion_traffic_cidr
+  ingress_rules            = ["ssh-tcp"]
+}
+
+module "aws_k8s_sg" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name        = "k8s-sg"
+  description = "k8s-sg"
+  vpc_id      = data.aws_subnet.cluster_subnet.vpc_id
+
+  ingress_cidr_blocks      = var.k8s_traffic_cidr
+  ingress_rules            = ["https-443-tcp"]
+  ingress_with_cidr_blocks = [
     {
-      "Name"                                               = "${local.cluster_name}"
-      format("kubernetes.io/cluster/%v", "${local.cluster_name}") = "owned"
-    },
-    var.tags,
-  )
-}
+      from_port   = 30000
+      to_port     = 32000
+      protocol    = "tcp"
+      description = "K8s-service ports"
+      cidr_blocks = "10.0.0.0/8"
+    }
+  ]
 
-# Allow outgoing connectivity
-resource "aws_security_group_rule" "allow_all_outbound_from_kubernetes" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.kubernetes.id
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "tcp"
+      description = "K8s-service ports"
+      cidr_blocks = "10.0.0.0/8"
+    }
+  ]
 }
-
-# Allow SSH connections only from specific CIDR (TODO)
-resource "aws_security_group_rule" "allow_ssh_from_cidr" {
-  count     = length(var.ssh_access_cidr)
-  type      = "ingress"
-  from_port = 22
-  to_port   = 22
-  protocol  = "tcp"
-  # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-  # force an interpolation expression to be interpreted as a list by wrapping it
-  # in an extra set of list brackets. That form was supported for compatibilty in
-  # v0.11, but is no longer supported in Terraform v0.12.
-  #
-  # If the expression in the following list itself returns a list, remove the
-  # brackets to avoid interpretation as a list of lists. If the expression
-  # returns a single list item then leave it as-is and remove this TODO comment.
-  cidr_blocks       = [var.ssh_access_cidr[count.index]]
-  security_group_id = aws_security_group.kubernetes.id
-}
-
-# Allow the security group members to talk with each other without restrictions
-resource "aws_security_group_rule" "allow_cluster_crosstalk" {
-  type                     = "ingress"
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  source_security_group_id = aws_security_group.kubernetes.id
-  security_group_id        = aws_security_group.kubernetes.id
-}
-
-# Allow API connections only from specific CIDR (TODO)
-resource "aws_security_group_rule" "allow_api_from_cidr" {
-  count     = length(var.api_access_cidr)
-  type      = "ingress"
-  from_port = 6443
-  to_port   = 6443
-  protocol  = "tcp"
-  # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-  # force an interpolation expression to be interpreted as a list by wrapping it
-  # in an extra set of list brackets. That form was supported for compatibilty in
-  # v0.11, but is no longer supported in Terraform v0.12.
-  #
-  # If the expression in the following list itself returns a list, remove the
-  # brackets to avoid interpretation as a list of lists. If the expression
-  # returns a single list item then leave it as-is and remove this TODO comment.
-  cidr_blocks       = [var.api_access_cidr[count.index]]
-  security_group_id = aws_security_group.kubernetes.id
-}
-
 
 ###################################
 ##### Generates kubeadm token #####
@@ -308,7 +277,7 @@ resource "aws_instance" "master" {
   associate_public_ip_address = false
 
   vpc_security_group_ids = [
-    aws_security_group.kubernetes.id,
+    module.aws_k8s_sg.this_security_group_id,
   ]
 
   iam_instance_profile = aws_iam_instance_profile.master_profile.name
@@ -355,7 +324,7 @@ resource "aws_launch_configuration" "nodes" {
   iam_instance_profile = aws_iam_instance_profile.node_profile.name
 
   security_groups = [
-    aws_security_group.kubernetes.id,
+    module.aws_k8s_sg.this_security_group_id,
   ]
 
   associate_public_ip_address = false
