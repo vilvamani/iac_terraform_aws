@@ -213,7 +213,7 @@ data "template_file" "init_master" {
   vars = {
     kubeadm_token = data.template_file.kubeadm_token.rendered
     dns_name      = "${local.cluster_name}.${var.hosted_zone}"
-    ip_address    = aws_eip.master.public_ip
+    ip_address    = aws_eip.k8s_master_eip.public_ip
     cluster_name  = local.cluster_name
     addons        = join(" ", var.addons)
     aws_region    = var.region
@@ -254,8 +254,8 @@ data "template_file" "init_node" {
 
   vars = {
     kubeadm_token     = data.template_file.kubeadm_token.rendered
-    master_ip         = aws_eip.master.public_ip
-    master_private_ip = aws_instance.master.private_ip
+    master_ip         = aws_eip.k8s_master_eip.public_ip
+    master_private_ip = aws_instance.k8s_master.private_ip
     dns_name          = "${local.cluster_name}.${var.hosted_zone}"
   }
 }
@@ -275,11 +275,11 @@ data "template_cloudinit_config" "node_cloud_init" {
 ##### K8s Master - AWS EC2 instance #####
 #########################################
 
-resource "aws_eip" "k8s-master" {
+resource "aws_eip" "k8s_master_eip" {
   vpc = true
 }
 
-resource "aws_instance" "master" {
+resource "aws_instance" "k8s_master" {
   instance_type = var.master_instance_type
 
   ami =  var.k8s_ami_id
@@ -308,7 +308,7 @@ resource "aws_instance" "master" {
 
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = "100"
+    volume_size           = "50"
     delete_on_termination = true
   }
 
@@ -322,14 +322,14 @@ resource "aws_instance" "master" {
 }
 
 resource "aws_eip_association" "master_assoc" {
-  instance_id   = aws_instance.master.id
-  allocation_id = aws_eip.master.id
+  instance_id   = aws_instance.k8s_master.id
+  allocation_id = aws_eip.k8s_master_eip.id
 }
 
 #########################################
 ##### K8s Nodes - AWS EC2 instance ######
 #########################################
-resource "aws_launch_configuration" "k8s-nodes" {
+resource "aws_launch_configuration" "k8s_nodes" {
   name_prefix          = "${local.cluster_name}-nodes-"
   image_id             = var.k8s_ami_id
   instance_type        = var.worker_instance_type
@@ -346,7 +346,7 @@ resource "aws_launch_configuration" "k8s-nodes" {
 
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = "100"
+    volume_size           = "50"
     delete_on_termination = true
   }
 
@@ -356,8 +356,7 @@ resource "aws_launch_configuration" "k8s-nodes" {
   }
 }
 
-resource "aws_autoscaling_group" "k8s-nodes-asg" {
-  depends_on = [aws_instance.k8s-master]
+resource "aws_autoscaling_group" "k8s_nodes_asg" {
 
   vpc_zone_identifier = var.worker_subnet_ids
 
@@ -396,10 +395,10 @@ data "aws_route53_zone" "dns_zone" {
   private_zone = var.hosted_zone_private
 }
 
-resource "aws_route53_record" "master" {
+resource "aws_route53_record" "k8s_master_dns" {
   zone_id = data.aws_route53_zone.dns_zone.zone_id
   name    = "${local.cluster_name}.${var.hosted_zone}"
   type    = "A"
-  records = [aws_eip.master.public_ip]
+  records = [aws_eip.k8s_master_eip.public_ip]
   ttl     = 300
 }
