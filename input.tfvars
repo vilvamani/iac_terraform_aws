@@ -18,11 +18,9 @@ hosted_zone = ""
 hosted_zone_private = true
 
 addons = [
-    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/storage-class.yaml",
-    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/heapster.yaml",
-    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/dashboard.yaml",
-    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/external-dns.yaml",
-    "https://raw.githubusercontent.com/scholzj/terraform-aws-kubernetes/master/addons/autoscaler.yaml"
+    "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-dashboard.yaml",
+    "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-heapster.yaml",
+    "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-autoscaler.yaml"
 ]
 
 k8s_master_tags = {
