@@ -50,8 +50,8 @@ module "k8s_cluster" {
   
   region                = var.region
   cluster_name          = var.cluster_name
-  master_subnet_id      = module.aws_network.private_subnets[0]
-  worker_subnet_ids     = module.aws_network.private_subnets
+  master_subnet_id      = module.aws_network.public_subnets[0]
+  worker_subnet_ids     = module.aws_network.public_subnets
   k8s_traffic_cidr      = var.k8s_traffic_cidr
   key_name              = var.key_name
   k8s_ami_id            = var.centos_ami_id
