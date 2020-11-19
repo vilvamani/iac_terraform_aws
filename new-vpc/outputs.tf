@@ -35,7 +35,7 @@ output "k8s_master_public_ip" {
 }
 
 output "efs_id" {
-  value = module.k8s_cluster.id
+  value = module.k8s_cluster.efs_id
 }
 
 output "mount_target_ids" {
