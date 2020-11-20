@@ -182,14 +182,16 @@ done
 mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-62ee5f97.efs.us-east-1.amazonaws.com:/ ~/efs-mount-point
 
 mkdir -p ~/efs-mount-point/jenkins
-mkdir -p ~/efs-mount-point/sonarqube
+mkdir -p ~/efs-mount-point/sonarqube-extensions
+mkdir -p ~/efs-mount-point/sonarqube-data
 mkdir -p ~/efs-mount-point/postgres
 mkdir -p ~/efs-mount-point/sonatype-nexus
 mkdir -p ~/efs-mount-point/influxdb
 mkdir -p ~/efs-mount-point/grafana
 
 chmod -R 777 ~/efs-mount-point/jenkins
-chmod -R 777 ~/efs-mount-point/sonarqube
+chmod -R 777 ~/efs-mount-point/sonarqube-extensions
+chmod -R 777 ~/efs-mount-point/sonarqube-data
 chmod -R 777 ~/efs-mount-point/postgres
 chmod -R 777 ~/efs-mount-point/sonatype-nexus
 chmod -R 777 ~/efs-mount-point/influxdb
