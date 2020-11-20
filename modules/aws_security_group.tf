@@ -7,7 +7,7 @@ data "aws_subnet" "cluster_subnet" {
 
 resource "aws_security_group" "kubernetes" {
   vpc_id = data.aws_subnet.cluster_subnet.vpc_id
-  name   = "${var.cluster_name}"
+  name   = var.cluster_name
 
   tags = merge(
     {
