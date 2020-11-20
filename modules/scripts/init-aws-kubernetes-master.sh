@@ -17,7 +17,6 @@ export AWS_REGION=${aws_region}
 export AWS_SUBNETS="${aws_subnets}"
 export ADDONS="${addons}"
 export KUBERNETES_VERSION="1.19.3"
-export EFS_DNS="${efs_dns_name}"
 
 # Set this only after setting the defaults
 set -o nounset
@@ -37,8 +36,6 @@ pip install awscli --upgrade
 yum -y install nfs-utils git
 
 mkdir -p ~/efs-mount-point
-
-sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_DNS:/ ~/efs-mount-point
 
 # Tag subnets
 for SUBNET in $AWS_SUBNETS
