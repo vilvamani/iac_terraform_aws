@@ -98,3 +98,7 @@ resource "aws_eip_association" "master_assoc" {
   instance_id   = aws_instance.k8s_master.id
   allocation_id = aws_eip.k8s_master_eip.id
 }
+
+output "k8s_master_public_ip" {
+  value       = aws_eip.k8s_master_eip.public_ip
+}

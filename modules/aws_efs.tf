@@ -16,3 +16,15 @@ module "efs" {
   security_groups    = [aws_security_group.kubernetes.id]
   encrypted          = true
 }
+
+output "efs_id" {
+  value = module.efs.id
+}
+
+output "mount_target_ids" {
+  value = module.efs.mount_target_ids
+}
+
+output "dns_name" {
+  value = module.efs.dns_name
+}
