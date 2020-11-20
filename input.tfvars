@@ -25,7 +25,8 @@ hosted_zone_private     = true
 addons = [
     "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-dashboard.yaml",
     "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-heapster.yaml",
-    "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-autoscaler.yaml"
+    "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-autoscaler.yaml",
+    "https://raw.githubusercontent.com/vilvamani/ias_terraform_aws/main/k8s-addions/k8s-storageclass.yaml"
 ]
 
 k8s_master_tags = {

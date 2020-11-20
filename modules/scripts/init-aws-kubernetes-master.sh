@@ -17,6 +17,7 @@ export AWS_REGION=${aws_region}
 export AWS_SUBNETS="${aws_subnets}"
 export ADDONS="${addons}"
 export KUBERNETES_VERSION="1.19.3"
+export EFS_DNS="${efs_dns_name}"
 
 # Set this only after setting the defaults
 set -o nounset
@@ -167,6 +168,8 @@ sed -i "s/server: https:\/\/$IP_ADDRESS:6443/server: https:\/\/$DNS_NAME:6443/g"
 chown centos:centos /home/centos/kubeconfig
 chmod 0600 /home/centos/kubeconfig
 
+kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.0" --validate=false
+
 # Load addons
 for ADDON in $ADDONS
 do
@@ -174,3 +177,20 @@ do
   kubectl apply -f /tmp/addon.yaml
   rm /tmp/addon.yaml
 done
+
+# Mount EFS Storage
+mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-62ee5f97.efs.us-east-1.amazonaws.com:/ ~/efs-mount-point
+
+mkdir -p ~/efs-mount-point/jenkins
+mkdir -p ~/efs-mount-point/sonarqube
+mkdir -p ~/efs-mount-point/postgres
+mkdir -p ~/efs-mount-point/sonatype-nexus
+mkdir -p ~/efs-mount-point/influxdb
+mkdir -p ~/efs-mount-point/grafana
+
+chmod -R 777 ~/efs-mount-point/jenkins
+chmod -R 777 ~/efs-mount-point/sonarqube
+chmod -R 777 ~/efs-mount-point/postgres
+chmod -R 777 ~/efs-mount-point/sonatype-nexus
+chmod -R 777 ~/efs-mount-point/influxdb
+chmod -R 777 ~/efs-mount-point/grafana
