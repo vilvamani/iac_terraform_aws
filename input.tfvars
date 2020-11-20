@@ -17,8 +17,8 @@ key_name                = ""
 centos_ami_id           = "ami-0affd4508a5d2481b"
 min_worker_count        = 2
 max_worker_count        = 6
-master_instance_type    = "t2.medium"
-worker_instance_type    = "t2.xlarge"
+master_instance_type    = "t3.medium"
+worker_instance_type    = "t3.medium"
 hosted_zone             = ""
 hosted_zone_private     = true
 
