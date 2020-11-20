@@ -11,8 +11,8 @@ resource "aws_security_group" "kubernetes" {
 
   tags = merge(
     {
-      "Name"                                               = "${var.cluster_name}"
-      format("kubernetes.io/cluster/%v", "${var.cluster_name}") = "owned"
+      "Name"                                               = var.cluster_name
+      format("kubernetes.io/cluster/%v", var.cluster_name) = "owned"
     },
     var.k8s_master_tags,
   )

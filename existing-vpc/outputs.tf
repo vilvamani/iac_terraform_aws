@@ -1,5 +1,5 @@
 output "k8s_cluster_name" {
-  value = "${var.cluster_name}"
+  value = var.cluster_name
 }
 
 output "kubeadm_token" {

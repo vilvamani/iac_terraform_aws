@@ -26,10 +26,6 @@ data "template_file" "kubeadm_token" {
   ]
 }
 
-output "cluster_name" {
-  value = "${var.cluster_name}"
-}
-
 output "kubeadm_token" {
   value       = data.template_file.kubeadm_token.rendered
 }

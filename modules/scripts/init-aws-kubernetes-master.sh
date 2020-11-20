@@ -17,7 +17,7 @@ export AWS_REGION=${aws_region}
 export AWS_SUBNETS="${aws_subnets}"
 export ADDONS="${addons}"
 export KUBERNETES_VERSION="1.19.3"
-export EFS_DNS="efs_dns_name"
+export EFS_DNS="${efs_dns_name}"
 
 # Set this only after setting the defaults
 set -o nounset
