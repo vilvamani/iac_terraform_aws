@@ -178,6 +178,10 @@ do
   rm /tmp/addon.yaml
 done
 
+kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:jenkins:default
+
+kubectl create clusterrolebinding jenkins-cluster-admin --clusterrole cluster-admin --serviceaccount=jenkins:default
+
 # Mount EFS Storage
 mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_DNS:/ ~/efs-mount-point
 
