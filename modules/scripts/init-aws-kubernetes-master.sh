@@ -74,6 +74,10 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scr
 chmod 700 get_helm.sh
 ./get_helm.sh
 
+# Docker Run permission
+chown centos:centos /var/run/docker.sock
+
+
 # Start services
 systemctl enable docker
 systemctl start docker
@@ -178,9 +182,13 @@ do
   rm /tmp/addon.yaml
 done
 
-kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:jenkins:default
+kubectl create clusterrolebinding jenkins-sa-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:jenkins:default
 
-kubectl create clusterrolebinding jenkins-cluster-admin --clusterrole cluster-admin --serviceaccount=jenkins:default
+kubectl create clusterrolebinding jenkins-sa-admin --clusterrole cluster-admin --serviceaccount=jenkins:default
+
+kubectl create clusterrolebinding default-sa-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:default:default
+
+kubectl create clusterrolebinding default-sa-admin --clusterrole cluster-admin --serviceaccount=default:default
 
 # Mount EFS Storage
 mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_DNS:/ ~/efs-mount-point

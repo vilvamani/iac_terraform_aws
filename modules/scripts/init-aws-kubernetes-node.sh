@@ -49,6 +49,9 @@ fi
 
 yum install -y kubelet-$KUBERNETES_VERSION kubeadm-$KUBERNETES_VERSION kubernetes-cni
 
+# Docker Run permission
+chown centos:centos /var/run/docker.sock
+
 # Start services
 systemctl enable docker
 systemctl start docker
