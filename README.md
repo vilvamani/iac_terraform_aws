@@ -1,3 +1,5 @@
+This repository script helps to provision self-managed Kubernetes (K8s) Cluster on AWS EC2 CentOS Operating System. This terraform script helps us to lunch Kubernetes either on New AWS VPC or Existing AWS VPC.
+
 # Infrastructure as Code (IaC)
 
 Infrastructure as code is the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
