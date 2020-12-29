@@ -74,14 +74,14 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scr
 chmod 700 get_helm.sh
 ./get_helm.sh
 
-# Docker Run permission
-sudo chown centos:centos /var/run/docker.sock
-
 # Start services
 systemctl enable docker
 systemctl start docker
 systemctl enable kubelet
 systemctl start kubelet
+
+# Docker Run permission
+sudo chown centos:centos /var/run/docker.sock
 
 # Set settings needed by Docker
 sysctl net.bridge.bridge-nf-call-iptables=1

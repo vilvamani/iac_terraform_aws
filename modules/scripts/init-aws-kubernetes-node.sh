@@ -49,14 +49,14 @@ fi
 
 yum install -y kubelet-$KUBERNETES_VERSION kubeadm-$KUBERNETES_VERSION kubernetes-cni
 
-# Docker Run permission
-sudo chown centos:centos /var/run/docker.sock
-
 # Start services
 systemctl enable docker
 systemctl start docker
 systemctl enable kubelet
 systemctl start kubelet
+
+# Docker Run permission
+sudo chown centos:centos /var/run/docker.sock
 
 # Set settings needed by Docker
 sysctl net.bridge.bridge-nf-call-iptables=1

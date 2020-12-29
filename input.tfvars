@@ -1,5 +1,5 @@
 region                  = "us-east-1"
-cluster_name            = "training-k8s"
+cluster_name            = "demo-k8s"
 
 # This is used while lunching k8s cluster on the new vpc
 vpc_cidr_range          = "10.0.0.0/16"
