@@ -49,25 +49,27 @@ terraform -v
 git clone https://github.com/vilvamani/iac_terraform_aws.git && cd iac_terraform_aws
 ```
 
-2. Initialize Terraform configuration files.
+2. Validate/Update the configuration in the input.tfars file
+
+3. Initialize Terraform configuration files.
 
 ```
 terraform init
 ```
 
-3. Run terraform plan to verify the infrastructure
+4. Run terraform plan to verify the infrastructure
 
 ```
 terraform plan -var-file=../input.tfvars
 ```
 
-4. Provision AWS infrastucture and Kubernetes cluster command by exuting terraform apply command.
+5. Provision AWS infrastucture and Kubernetes cluster command by exuting terraform apply command.
 
 ```
 terraform apply -var-file=../input.tfvars
 ```
 
-5. Destroy the Infrastructure managed by Terraform.
+6. Destroy the Infrastructure managed by Terraform.
 
 ```
 terraform destroy -var-file=../input.tfvars

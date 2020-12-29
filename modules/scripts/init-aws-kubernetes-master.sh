@@ -77,7 +77,6 @@ chmod 700 get_helm.sh
 # Docker Run permission
 sudo chown centos:centos /var/run/docker.sock
 
-
 # Start services
 systemctl enable docker
 systemctl start docker
