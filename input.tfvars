@@ -10,7 +10,7 @@ public_subnets          = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 worker_subnet_ids       = ["subnet-xxxxxxx", "subnet-xxxxxxx", "subnet-xxxxxxx"]
 master_subnet_id        = "subnet-xxxxxxx"
 
-k8s_traffic_cidr        = ["10.0.0.0/8", "103.231.218.202/32"]
+k8s_traffic_cidr        = ["10.0.0.0/8", "0.0.0.0/0"]
 
 key_name                = "k8s-cluster"
 
