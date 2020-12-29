@@ -75,7 +75,7 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 
 # Docker Run permission
-chown centos:centos /var/run/docker.sock
+sudo chown centos:centos /var/run/docker.sock
 
 
 # Start services
