@@ -152,7 +152,7 @@ kubeadm init --config /tmp/kubeadm.yaml
 # Use the local kubectl config for further kubectl operations
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-echo "export KUBECONFIG=/etc/kubernetes/admin.conf" > /root/.bash_profile
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /root/.bash_profile
 
 # Install calico
 kubectl apply -f /tmp/calico.yaml
