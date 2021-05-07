@@ -17,6 +17,7 @@ data "template_file" "init_master" {
     asg_max_nodes = var.max_worker_count
     aws_subnets   = join(" ", concat(var.worker_subnet_ids, [var.master_subnet_id]))
     efs_dns_name  = module.efs.dns_name
+    efs_id  = module.efs.efs_id
   }
 }
 

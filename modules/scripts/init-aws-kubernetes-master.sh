@@ -18,6 +18,7 @@ export AWS_SUBNETS="${aws_subnets}"
 export ADDONS="${addons}"
 export KUBERNETES_VERSION="1.19.3"
 export EFS_DNS="${efs_dns_name}"
+export EFS_ID="${efs_id}"
 
 # Set this only after setting the defaults
 set -o nounset
@@ -151,6 +152,8 @@ kubeadm init --config /tmp/kubeadm.yaml
 # Use the local kubectl config for further kubectl operations
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" > /root/.bash_profile
+
 # Install calico
 kubectl apply -f /tmp/calico.yaml
 
@@ -193,6 +196,7 @@ kubectl create clusterrolebinding default-sa-admin --clusterrole cluster-admin -
 mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_DNS:/ ~/efs-mount-point
 
 # Mount K8s persistentvolume path
+mkdir -p ~/efs-mount-point/jenkins
 mkdir -p ~/efs-mount-point/jenkins-blue
 mkdir -p ~/efs-mount-point/sonarqube-extensions-blue
 mkdir -p ~/efs-mount-point/sonarqube-data-blue
@@ -201,6 +205,7 @@ mkdir -p ~/efs-mount-point/sonatype-nexus-blue
 mkdir -p ~/efs-mount-point/influxdb-blue
 mkdir -p ~/efs-mount-point/grafana-blue
 
+chmod -R 777 ~/efs-mount-point/jenkins
 chmod -R 777 ~/efs-mount-point/jenkins-blue
 chmod -R 777 ~/efs-mount-point/sonarqube-extensions-blue
 chmod -R 777 ~/efs-mount-point/sonarqube-data-blue
@@ -208,3 +213,34 @@ chmod -R 777 ~/efs-mount-point/postgres-blue
 chmod -R 777 ~/efs-mount-point/sonatype-nexus-blue
 chmod -R 777 ~/efs-mount-point/influxdb-blue
 chmod -R 777 ~/efs-mount-point/grafana-blue
+
+# Create DevOps Namespace
+kubectl create namespace devops
+
+kubectl create configmap docker-config --from-file=https://github.com/vilvamani/iac_terraform_aws/blob/main/modules/templates/config.json --namespace devops
+
+# Download Jenkins helm repo
+helm repo add stable https://charts.helm.sh/stable
+
+# Initialize the master
+cat >/tmp/jenkins-volume.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins
+spec:
+  capacity:
+    storage: 25Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: $EFS_ID:/jenkins
+EOF
+# Create Jenkins persistent Volume
+kubectl apply -f /tmp/jenkins-volume.yaml --namespace devops
+helm upgrade --install jenkins stable/jenkins  --values https://github.com/vilvamani/iac_terraform_aws/blob/main/modules/templates/jenkins-values.yml --namespace devops
