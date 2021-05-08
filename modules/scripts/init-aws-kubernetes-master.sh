@@ -221,6 +221,7 @@ kubectl create configmap docker-config --from-file=https://raw.githubusercontent
 
 # Download Jenkins helm repo
 helm repo add stable https://charts.helm.sh/stable
+helm repo list
 
 # Initialize the master
 cat >/tmp/jenkins-volume.yaml <<EOF
@@ -244,3 +245,4 @@ EOF
 # Create Jenkins persistent Volume
 kubectl apply -f /tmp/jenkins-volume.yaml --namespace devops
 helm upgrade --install jenkins stable/jenkins  --values https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/modules/templates/jenkins-values.yml --namespace devops
+kubectl get pods --namespace devops
