@@ -217,13 +217,22 @@ chmod -R 777 ~/efs-mount-point/grafana-blue
 # Create DevOps Namespace
 kubectl create namespace devops
 
-kubectl create configmap docker-config --from-file=https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/modules/templates/config.json --namespace devops
-
 # Download Jenkins helm repo
 helm repo add stable https://charts.helm.sh/stable
 helm repo list
 
-# Initialize the master
+cat >/tmp/config.json <<EOF
+{
+    "auths": {
+        "https://index.docker.io/v1/": {
+            "auth": "dmlsdmFtYW5pMDA3OlJldmF0aHlAMDA3"
+        }
+    }
+}
+EOF
+
+kubectl create configmap docker-config --from-file=/tmp/config.json --namespace devops
+
 cat >/tmp/jenkins-volume.yaml <<EOF
 ---
 apiVersion: v1
@@ -242,6 +251,7 @@ spec:
     driver: efs.csi.aws.com
     volumeHandle: $EFS_ID:/jenkins
 EOF
+
 # Create Jenkins persistent Volume
 kubectl apply -f /tmp/jenkins-volume.yaml --namespace devops
 helm upgrade --install jenkins stable/jenkins  --values https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/modules/templates/jenkins-values.yml --namespace devops
