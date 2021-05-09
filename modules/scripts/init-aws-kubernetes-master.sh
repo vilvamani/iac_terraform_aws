@@ -184,13 +184,10 @@ do
   rm /tmp/addon.yaml
 done
 
-kubectl create clusterrolebinding jenkins-sa-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:jenkins:default
-
-kubectl create clusterrolebinding jenkins-sa-admin --clusterrole cluster-admin --serviceaccount=jenkins:default
-
-kubectl create clusterrolebinding default-sa-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:default:default
-
-kubectl create clusterrolebinding default-sa-admin --clusterrole cluster-admin --serviceaccount=default:default
+#kubectl create clusterrolebinding jenkins-sa-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:jenkins:default
+#kubectl create clusterrolebinding jenkins-sa-admin --clusterrole cluster-admin --serviceaccount=jenkins:default
+#kubectl create clusterrolebinding default-sa-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:system:serviceaccount:default:default
+#kubectl create clusterrolebinding default-sa-admin --clusterrole cluster-admin --serviceaccount=default:default
 
 # Mount EFS Storage
 mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_DNS:/ ~/efs-mount-point
@@ -233,7 +230,7 @@ EOF
 
 kubectl create configmap docker-config --from-file=/tmp/config.json --namespace devops
 
-cat >/tmp/jenkins-volume.yaml <<EOF
+cat >/tmp/jenkins_volume.yaml <<EOF
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -252,7 +249,25 @@ spec:
     volumeHandle: $EFS_ID:/jenkins
 EOF
 
+cat >/tmp/jenkins_role_permission.yaml <<EOF
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: devops-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: devops
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+EOD
+
+kubectl apply -f /tmp/jenkins_role_permission.yaml --namespace devops
+
 # Create Jenkins persistent Volume
-kubectl apply -f /tmp/jenkins-volume.yaml --namespace devops
+kubectl apply -f /tmp/jenkins_volume.yaml --namespace devops
 helm upgrade --install jenkins stable/jenkins  --values https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/modules/templates/jenkins-values.yml --namespace devops
 kubectl get pods --namespace devops
