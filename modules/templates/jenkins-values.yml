@@ -168,7 +168,6 @@ master:
             - name: "SonarQube"
               serverUrl: "http://sonarqube-service:9000"
               serverAuthenticationToken: 'sonarqube-token'
-
   # Auto-reload
   sidecars:
     configAutoReload:
@@ -189,7 +188,7 @@ master:
 agent:
   enabled: true
   image: "jenkins/inbound-agent"
-  tag: "4.3-4"
+  tag: "4.7-1-alpine"
   workingDir: "/home/jenkins"
   customJenkinsLabels: []
   # name of the secret to be used for image pulling
