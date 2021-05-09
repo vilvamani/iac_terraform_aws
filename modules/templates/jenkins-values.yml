@@ -166,7 +166,7 @@ master:
             buildWrapperEnabled: true
             installations:
             - name: "SonarQube"
-              serverUrl: "https://sonarqube-service:9000"
+              serverUrl: "http://sonarqube-service:9000"
               serverAuthenticationToken: 'sonarqube-token'
 
   # Auto-reload
