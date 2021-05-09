@@ -128,7 +128,12 @@ master:
                   scope:        GLOBAL
                   id:           docker-hub-credentials
                   username:     vilvamani007
-                  password:     test@007
+                  password:     test
+              - string:
+                  scope:        GLOBAL
+                  id:           slack-api-token
+                  secret:       test
+                  description: Slack API Token
         jenkins:
           # Configure System → Global properties
           globalNodeProperties:
@@ -168,6 +173,9 @@ master:
             - name: "SonarQube"
               serverUrl: "http://sonarqube-service:9000"
               serverAuthenticationToken: 'sonarqube-token'
+          slackNotifier:
+            teamDomain: devops-los1316
+            tokenCredentialId: slack-api-token
   # Auto-reload
   sidecars:
     configAutoReload:
