@@ -160,6 +160,14 @@ master:
                   installers:
                   - maven:
                       id: "3.8"
+        unclassified:
+          # Configure System → SonarQube servers
+          sonarglobalconfiguration:
+            buildWrapperEnabled: true
+            installations:
+            - name: "sonarQA"
+              serverUrl: "https://sonarqube-service:9000"
+              serverAuthenticationToken: 'sonarqube-token'
 
   # Auto-reload
   sidecars:
@@ -235,8 +243,7 @@ networkPolicy:
   internalAgents:
     allowed: true
     podLabels: {}
-    namespaceLabels:
-      {}
+    namespaceLabels: {}
       # project: myproject
   externalAgents: {}
 
