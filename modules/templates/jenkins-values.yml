@@ -165,7 +165,7 @@ master:
           sonarglobalconfiguration:
             buildWrapperEnabled: true
             installations:
-            - name: "sonarQA"
+            - name: "SonarQube"
               serverUrl: "https://sonarqube-service:9000"
               serverAuthenticationToken: 'sonarqube-token'
 
