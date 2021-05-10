@@ -263,7 +263,7 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
   apiGroup: ""
-EOD
+EOF
 
 kubectl apply -f /tmp/jenkins_role_permission.yaml --namespace devops
 
