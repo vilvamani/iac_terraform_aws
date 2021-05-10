@@ -222,7 +222,7 @@ cat >/tmp/config.json <<EOF
 {
     "auths": {
         "https://index.docker.io/v1/": {
-            "auth": "dmlsdmFtYW5pMDA3OlJldmF0aHlAMDA3"
+            "auth": "YWxnb3NoYWNrOk1lZW51QDAwNw=="
         }
     }
 }
