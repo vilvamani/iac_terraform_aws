@@ -194,22 +194,16 @@ mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
 
 # Mount K8s persistentvolume path
 mkdir -p ~/efs-mount-point/jenkins
-mkdir -p ~/efs-mount-point/jenkins-blue
-mkdir -p ~/efs-mount-point/sonarqube-extensions-blue
-mkdir -p ~/efs-mount-point/sonarqube-data-blue
-mkdir -p ~/efs-mount-point/postgres-blue
-mkdir -p ~/efs-mount-point/sonatype-nexus-blue
-mkdir -p ~/efs-mount-point/influxdb-blue
-mkdir -p ~/efs-mount-point/grafana-blue
+mkdir -p ~/efs-mount-point/sonarqube-extensions
+mkdir -p ~/efs-mount-point/sonarqube-data
+mkdir -p ~/efs-mount-point/postgres
+mkdir -p ~/efs-mount-point/grafana
 
 chmod -R 777 ~/efs-mount-point/jenkins
-chmod -R 777 ~/efs-mount-point/jenkins-blue
-chmod -R 777 ~/efs-mount-point/sonarqube-extensions-blue
-chmod -R 777 ~/efs-mount-point/sonarqube-data-blue
-chmod -R 777 ~/efs-mount-point/postgres-blue
-chmod -R 777 ~/efs-mount-point/sonatype-nexus-blue
-chmod -R 777 ~/efs-mount-point/influxdb-blue
-chmod -R 777 ~/efs-mount-point/grafana-blue
+chmod -R 777 ~/efs-mount-point/sonarqube-extensions
+chmod -R 777 ~/efs-mount-point/sonarqube-data
+chmod -R 777 ~/efs-mount-point/postgres
+chmod -R 777 ~/efs-mount-point/grafana
 
 # Create DevOps Namespace
 kubectl create namespace devops
@@ -249,6 +243,79 @@ spec:
     volumeHandle: $EFS_ID:/jenkins
 EOF
 
+cat >/tmp/sonarqube_volume.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: $EFS_ID:/postgres
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sonarqube-extensions-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: $EFS_ID:/sonarqube-extensions
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sonarqube-data-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: $EFS_ID:/sonarqube-data
+    
+EOF
+
+cat >/tmp/grafana_volume.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: $EFS_ID:/grafana
+EOF
+
 cat >/tmp/jenkins_role_permission.yaml <<EOF
 ---
 kind: ClusterRoleBinding
@@ -267,7 +334,39 @@ EOF
 
 kubectl apply -f /tmp/jenkins_role_permission.yaml --namespace devops
 
-# Create Jenkins persistent Volume
+# Create/Deploy Jenkins
 kubectl apply -f /tmp/jenkins_volume.yaml --namespace devops
 helm upgrade --install jenkins stable/jenkins  --values https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/modules/templates/jenkins-values.yml --namespace devops
-kubectl get pods --namespace devops
+
+kubectl get pods --namespace=devops
+
+# Create/Deploy SonarQube
+kubectl apply -f /tmp/sonarqube_volume.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/sonarqube-secrets.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/postgres-pvc.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/postgres-deployment.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/postgres-service.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/sonarqube-pvc.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/sonarqube-deployment.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/sonarqube-service.yaml --namespace devops
+
+kubectl get pods --namespace=devops
+
+# Create/Deploy Grafana
+kubectl apply -f /tmp/grafana_volume.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-configmap.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-secrets.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/blue/grafana-pvc.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/blue/grafana-deployment.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-service.yaml --namespace devops
+
+kubectl get pods --namespace=devops
+
+# Create/Deploy prometheus
+kubectl create namespace monitoring
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/prometheus/clusterRole.yaml --namespace monitoring
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/prometheus/config-map.yaml --namespace monitoring
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/prometheus/prometheus-deployment.yaml --namespace monitoring
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/prometheus/prometheus-service.yaml --namespace monitoring
+
+kubectl get pods --namespace=monitoring

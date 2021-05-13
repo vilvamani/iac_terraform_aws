@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: postgres
+  template:
+    metadata:
+      name: postgres
+      labels:
+        name: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: postgresport
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-pwd
+                  key: password
+            - name: POSTGRES_USER
+              value: sonar
+          resources: {}
+          volumeMounts:
+            - name: data-disk
+              mountPath: /var/lib/postgresql/data
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      schedulerName: default-scheduler
+      volumes:
+        - name: data-disk
+          persistentVolumeClaim:
+            claimName: postgres-pvc
