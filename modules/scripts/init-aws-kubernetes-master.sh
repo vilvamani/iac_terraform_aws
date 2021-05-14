@@ -343,11 +343,11 @@ kubectl get pods --namespace=devops
 # Create/Deploy SonarQube
 kubectl apply -f /tmp/sonarqube_volume.yaml --namespace devops
 kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/sonarqube-secrets.yaml --namespace devops
-kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/postgres-pvc.yaml --namespace devops
-kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/postgres-deployment.yaml --namespace devops
-kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/postgres-service.yaml --namespace devops
-kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/sonarqube-pvc.yaml --namespace devops
-kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/blue/sonarqube-deployment.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/postgres-pvc.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/postgres-deployment.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/postgres-service.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/sonarqube-pvc.yaml --namespace devops
+kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/sonarqube-deployment.yaml --namespace devops
 kubectl apply -f  https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/sonarqube/sonarqube-service.yaml --namespace devops
 
 kubectl get pods --namespace=devops
@@ -356,8 +356,8 @@ kubectl get pods --namespace=devops
 kubectl apply -f /tmp/grafana_volume.yaml --namespace devops
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-configmap.yaml --namespace devops
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-secrets.yaml --namespace devops
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/blue/grafana-pvc.yaml --namespace devops
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/blue/grafana-deployment.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-pvc.yaml --namespace devops
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-deployment.yaml --namespace devops
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/iac_terraform_aws/main/grafana/grafana-service.yaml --namespace devops
 
 kubectl get pods --namespace=devops
